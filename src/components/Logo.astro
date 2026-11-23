@@ -1,0 +1,35 @@
+---
+import { T_PARTS, T_FACET, T_VIEWBOX, T_SIZE } from '../data/logo';
+interface Props {
+  /** Höhe in Pixel */
+  size?: number;
+  class?: string;
+  title?: string;
+}
+const { size = 32, class: cls, title } = Astro.props;
+const id = 'tg' + Math.random().toString(36).slice(2, 8);
+---
+
+<svg
+  class:list={['logo', cls]}
+  viewBox={T_VIEWBOX}
+  height={size}
+  width={Math.round((size * T_SIZE.w) / T_SIZE.h)}
+  role={title ? 'img' : undefined}
+  aria-hidden={title ? undefined : 'true'}
+>
+  {title && <title>{title}</title>}
+  <defs>
+    <linearGradient id={id} x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" class="logo__a"></stop>
+      <stop offset="0.5" class="logo__b"></stop>
+      <stop offset="1" class="logo__c"></stop>
+    </linearGradient>
+  </defs>
+  <g fill={`url(#${id})`}>
+    <path d={T_PARTS.left}></path>
+    <path d={T_PARTS.right}></path>
+    <path d={T_PARTS.stem}></path>
+  </g>
+  <path d={T_FACET} class="logo__facet"></path>
+</svg>

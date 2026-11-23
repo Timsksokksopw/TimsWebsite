@@ -1,0 +1,376 @@
+---
+// Navigation: oben nur Logo und «Menü». Ein Klick öffnet ein Vollbild-Menü mit grossen Titeln und Bildvorschau.
+import { getImage } from 'astro:assets';
+import Logo from './Logo.astro';
+import { nav, site } from '../data/site';
+import { foto } from '../data/fotos';
+import { projekte } from '../data/projekte';
+
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const c = site.contact;
+
+const sources = {
+  wendico: projekte.find((p) => p.name === 'TTC Neuhausen')!.img,
+  arbeit: foto('tim-anzug').src,
+  ueber: foto('tim-studio').src,
+  freizeit: foto('waldhof-live').src,
+  kontakt: foto('akustik-im-weinland').src,
+};
+const previews = Object.fromEntries(
+  await Promise.all(Object.entries(sources).map(async ([k, src]) => [k, (await getImage({ src, width: 900, format: 'webp' })).src])),
+) as Record<string, string>;
+
+const isCurrent = (href?: string) => (href && path === href ? 'page' : undefined);
+const activeKey = nav.find((n) => n.href === path || n.children?.some((ch) => ch.href === path))?.key ?? nav[0].key;
+---
+
+<header class="bar" data-nav>
+  <a href="/" class="bar__brand" aria-label="Tim Biedermann – Startseite">
+    <Logo size={36} />
+    <span>Tim Biedermann</span>
+  </a>
+  <button class="bar__menu" aria-expanded="false" aria-controls="menu" data-menu-toggle>
+    <span data-menu-label>Menü</span>
+    <span class="bar__lines" aria-hidden="true"><i></i><i></i></span>
+  </button>
+</header>
+
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menü" tabindex="-1" data-menu data-active={activeKey} hidden>
+  <div class="menu__inner">
+    <nav class="menu__list" aria-label="Hauptnavigation">
+      {
+        nav.map((item, i) => (
+          <div class="menu__row" data-preview={item.key}>
+            <span class="menu__n" aria-hidden="true">0{i + 1}</span>
+            {item.href ? (
+              <a class="menu__link" href={item.href} aria-current={isCurrent(item.href)}>
+                {item.label}
+              </a>
+            ) : (
+              <span class="menu__link menu__link--group">{item.label}</span>
+            )}
+            {item.children && (
+              <span class="menu__sub">
+                {item.children.map((ch) => (
+                  <a href={ch.href} aria-current={isCurrent(ch.href)}>
+                    {ch.label}
+                  </a>
+                ))}
+              </span>
+            )}
+          </div>
+        ))
+      }
+    </nav>
+
+    <div class="menu__preview" aria-hidden="true">
+      {nav.map((item) => <img src={previews[item.key]} alt="" data-preview-img={item.key} loading="lazy" decoding="async" />)}
+    </div>
+
+    <div class="menu__foot">
+      <a href="/" aria-current={isCurrent('/')}>Startseite</a>
+      <a href={c.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a>
+      {c.instagram && <a href={`https://www.instagram.com/${c.instagram}/`} target="_blank" rel="noopener">Instagram ↗</a>}
+      <a href={c.phoneHref}>{c.phoneDisplay}</a>
+      <a href={site.links.wendico} target="_blank" rel="noopener">wendico.ch ↗</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bar {
+    position: fixed;
+    z-index: 110;
+    inset: 0 0 auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: clamp(0.7rem, 1.6vw, 1.2rem) var(--gutter);
+    color: var(--ink);
+    transition: transform 0.6s var(--ease), background-color 0.4s, color 0.4s, padding 0.4s var(--ease);
+    view-transition-name: nav;
+  }
+  .bar::after {
+    content: '';
+    position: absolute;
+    inset: auto var(--gutter) 0;
+    height: 1px;
+    background: var(--line);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  /* weiter unten auf der Seite: dezenter Hintergrund, damit die Leiste lesbar bleibt */
+  .bar:global(.is-scrolled) {
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    padding-block: 0.6rem;
+  }
+  .bar:global(.is-scrolled)::after {
+    opacity: 1;
+  }
+  .bar:global(.is-hidden) {
+    transform: translateY(-110%);
+  }
+  /* über dunklen Abschnitten, z. B. im Abend-Teil der Startseite */
+  .bar:global(.bar--dark) {
+    color: #f3efe6;
+    --paper: #0f1012;
+    --line: rgba(255, 255, 255, 0.16);
+    --gold: #d9a94e;
+    --logo-a: #f8dc8e;
+    --logo-b: #d9a94e;
+    --logo-c: #a06f1e;
+  }
+  .bar__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: var(--font-display);
+    font-weight: 620;
+    font-size: 1.08rem;
+    letter-spacing: -0.017em;
+    white-space: nowrap;
+  }
+  .bar__brand :global(.logo) {
+    transition: transform 0.7s var(--ease-spring);
+  }
+  .bar__brand:hover :global(.logo) {
+    transform: rotate(-8deg) scale(1.1);
+  }
+  .bar__menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7em 1.1em 0.7em 1.25em;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--paper) 55%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+  }
+  .bar__menu:hover {
+    border-color: var(--gold);
+  }
+  .bar__lines {
+    display: grid;
+    gap: 6px;
+    width: 22px;
+  }
+  .bar__lines i {
+    height: 1.5px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.45s var(--ease), width 0.45s var(--ease);
+  }
+  .bar__lines i:last-child {
+    width: 62%;
+    justify-self: end;
+  }
+  .bar__menu:hover .bar__lines i:last-child {
+    width: 100%;
+  }
+  [aria-expanded='true'] .bar__lines i:first-child {
+    transform: translateY(3.75px) rotate(45deg);
+  }
+  [aria-expanded='true'] .bar__lines i:last-child {
+    width: 100%;
+    transform: translateY(-3.75px) rotate(-45deg);
+  }
+  /* offenes Menü: Leiste immer in Creme auf Anthrazit */
+  :global(html.menu-open) .bar {
+    color: #f3efe6;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transform: none;
+  }
+  :global(html.menu-open) .bar::after {
+    opacity: 0;
+  }
+  :global(html.menu-open) .bar__menu {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: transparent;
+  }
+
+  .menu {
+    --m-ink: #f3efe6;
+    --m-muted: #a8a195;
+    --m-gold: #d9a94e;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: #0f1012;
+    color: var(--m-ink);
+    clip-path: circle(0% at calc(100% - 5rem) 2.4rem);
+    transition: clip-path 0.8s var(--ease);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .menu[hidden] {
+    display: none;
+  }
+  .menu:focus {
+    outline: none;
+  }
+  /* der reservierte Platz des Scrollbalkens soll nicht hell durchscheinen */
+  :global(html.menu-open),
+  :global(html.menu-open body) {
+    background: #0f1012;
+  }
+  .menu:global(.is-open) {
+    clip-path: circle(150% at calc(100% - 5rem) 2.4rem);
+  }
+  .menu__inner {
+    min-height: 100%;
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    grid-template-rows: 1fr auto;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: center;
+    padding: clamp(5.5rem, 12vh, 8rem) var(--gutter) clamp(1.2rem, 3vh, 2rem);
+    width: min(1400px, 100%);
+    margin-inline: auto;
+  }
+  .menu__list {
+    display: grid;
+    gap: clamp(0.1rem, 0.8vh, 0.6rem);
+  }
+  .menu__row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 clamp(0.8rem, 2vw, 1.6rem);
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.5s, transform 0.8s var(--ease);
+  }
+  .menu:global(.is-open) .menu__row {
+    opacity: 1;
+    transform: none;
+  }
+  .menu:global(.is-open) .menu__row:nth-child(1) { transition-delay: 0.12s; }
+  .menu:global(.is-open) .menu__row:nth-child(2) { transition-delay: 0.17s; }
+  .menu:global(.is-open) .menu__row:nth-child(3) { transition-delay: 0.22s; }
+  .menu:global(.is-open) .menu__row:nth-child(4) { transition-delay: 0.27s; }
+  .menu:global(.is-open) .menu__row:nth-child(5) { transition-delay: 0.32s; }
+  .menu__n {
+    font-style: normal;
+    font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+    color: var(--m-gold);
+    width: 2.2ch;
+    font-weight: 600;
+  }
+  .menu__link {
+    font-family: var(--font-display);
+    font-weight: 620;
+    font-size: clamp(2.5rem, min(8vw, 11.5vh), 6.6rem);
+    letter-spacing: -0.028em;
+    line-height: 1.04;
+    transition: color 0.3s, transform 0.6s var(--ease);
+  }
+  a.menu__link:hover,
+  a.menu__link:focus-visible {
+    color: var(--m-gold);
+    transform: translateX(0.12em);
+  }
+  .menu__link--group {
+    color: var(--m-muted);
+  }
+  .menu__link[aria-current='page'] {
+    color: var(--m-gold);
+  }
+  .menu__sub {
+    display: inline-flex;
+    gap: clamp(0.8rem, 2vw, 1.6rem);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+    letter-spacing: -0.019em;
+  }
+  .menu__sub a {
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.25);
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .menu__sub a:hover,
+  .menu__sub a:focus-visible,
+  .menu__sub a[aria-current='page'] {
+    color: var(--m-gold);
+    border-color: var(--m-gold);
+  }
+  .menu__preview {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    max-height: 62vh;
+    width: 100%;
+    justify-self: end;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #17181b;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s 0.25s, transform 0.9s 0.25s var(--ease);
+  }
+  .menu:global(.is-open) .menu__preview {
+    opacity: 1;
+    transform: none;
+  }
+  .menu__preview img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.06);
+    transition: opacity 0.5s, transform 1.2s var(--ease);
+  }
+  .menu__preview img:global(.is-on) {
+    opacity: 1;
+    transform: none;
+  }
+  .menu__foot {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 0.95rem;
+    color: var(--m-muted);
+  }
+  .menu__foot a {
+    transition: color 0.3s;
+  }
+  .menu__foot a:hover,
+  .menu__foot a[aria-current='page'] {
+    color: var(--m-ink);
+  }
+  .menu :global(:focus-visible) {
+    outline-color: var(--m-gold);
+  }
+
+  @media (max-width: 860px) {
+    .menu__inner {
+      grid-template-columns: 1fr;
+      align-items: end;
+    }
+    .menu__preview {
+      display: none;
+    }
+    .bar__brand span {
+      font-size: 1rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu,
+    .menu__row,
+    .menu__preview {
+      transition: none;
+    }
+  }
+</style>

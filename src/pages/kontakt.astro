@@ -1,0 +1,194 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+const c = site.contact;
+const rows = [
+  { label: 'LinkedIn', value: 'Tim Biedermann', href: c.linkedin, ext: true },
+  ...(c.instagram ? [{ label: 'Instagram', value: `@${c.instagram}`, href: `https://www.instagram.com/${c.instagram}/`, ext: true }] : []),
+  { label: 'Telefon', value: c.phoneDisplay, href: c.phoneHref, ext: false },
+];
+---
+
+<Base page="kontakt" title="Kontakt" description="So erreichst du Tim Biedermann: per LinkedIn, Instagram oder Telefon.">
+  <section class="page-hero khero">
+    <div class="container khero__grid">
+      <div class="stack" style="--gap:1.4rem">
+        <p class="eyebrow" data-reveal>Kontakt</p>
+        <h1 class="t-page" data-split>Sag hoi.</h1>
+        <p class="t-lead t-muted khero__lead" data-reveal style="--d:3">
+          Eine Frage, eine Idee oder einfach Lust auf einen Kaffee im Weinland? Melde dich, ich freue mich.
+        </p>
+      </div>
+      <div class="khero__pick" data-cursor="grab" data-reveal="scale">
+        <div class="stage3d" data-viewer="pick"></div>
+        <span>Gib dem Plektrum Schwung</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <ul class="rows">
+        {
+          rows.map((r, i) => (
+            <li data-reveal style={`--d:${i}`}>
+              <a href={r.href} target={r.ext ? '_blank' : undefined} rel={r.ext ? 'noopener' : undefined} class="row">
+                <span class="row__label">{r.label}</span>
+                <span class="row__value">{r.value}</span>
+                <span class="row__arrow" aria-hidden="true">{r.ext ? '↗' : '→'}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container other">
+      <a class="card other__card" href={`${site.links.wendico}/kontakt`} target="_blank" rel="noopener" data-tilt="6" data-reveal>
+        <span class="chip chip--solid">Website-Projekt?</span>
+        <h2 class="t-l">Für Aufträge geht es über Wendico.</h2>
+        <p class="t-muted">Websites, Software und alles Digitale für dein Unternehmen.</p>
+        <span class="link">wendico.ch ↗</span>
+      </a>
+      <a class="card other__card" href={site.links.lostrios} target="_blank" rel="noopener" data-tilt="6" data-reveal style="--d:1">
+        <span class="chip chip--solid">Band buchen?</span>
+        <h2 class="t-l">Los Trios spielt auch bei dir.</h2>
+        <p class="t-muted">Anfragen für Auftritte laufen über die Website der Band.</p>
+        <span class="link">lostrios.ch ↗</span>
+      </a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initViewer } from '../scripts/three/viewer';
+  const v = document.querySelector<HTMLElement>('[data-viewer="pick"]');
+  if (v) {
+    try {
+      initViewer(v, 'pick', { scale: 1.7, tilt: 0.15 });
+    } catch {
+      v.parentElement!.hidden = true;
+    }
+  }
+</script>
+
+<style>
+  .khero__grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .khero__lead {
+    max-width: 28em;
+  }
+  .khero__pick {
+    position: relative;
+    aspect-ratio: 1;
+    width: min(100%, 24rem);
+    justify-self: end;
+    cursor: grab;
+    touch-action: none;
+  }
+  .khero__pick span {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    translate: -50% 0;
+    font-size: 0.86rem;
+    color: var(--muted);
+    white-space: nowrap;
+    pointer-events: none;
+    font-weight: 600;
+  }
+  :global(.no-webgl) .khero__pick {
+    display: none;
+  }
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 9rem 1fr auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: clamp(1.3rem, 3vw, 2.4rem) clamp(0rem, 1vw, 1rem);
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+    isolation: isolate;
+    transition: color 0.4s, padding 0.5s var(--ease);
+  }
+  .row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--ink);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.5s var(--ease);
+  }
+  .row:hover,
+  .row:focus-visible {
+    color: var(--paper);
+    padding-inline: clamp(1rem, 2.5vw, 2.4rem);
+  }
+  .row:hover::before,
+  .row:focus-visible::before {
+    transform: scaleY(1);
+  }
+  .row__label {
+    font-size: 0.86rem;
+    opacity: 0.65;
+    font-weight: 600;
+  }
+  .row__value {
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: clamp(1.8rem, 6.4vw, 5.4rem);
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .row__arrow {
+    font-size: clamp(1.4rem, 3.5vw, 3rem);
+    transition: transform 0.6s var(--ease-spring);
+  }
+  .row:hover .row__arrow {
+    transform: translate(0.15em, -0.15em) rotate(10deg);
+  }
+  .other {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+  .other__card {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+    transition: border-color 0.3s;
+  }
+  .other__card:hover {
+    border-color: var(--ink);
+  }
+  @media (max-width: 760px) {
+    .khero__grid {
+      grid-template-columns: 1fr;
+    }
+    .khero__pick {
+      justify-self: center;
+      width: min(70%, 16rem);
+    }
+    .row {
+      grid-template-columns: 1fr auto;
+    }
+    .row__label {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

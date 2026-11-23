@@ -1,0 +1,91 @@
+---
+import '@fontsource-variable/schibsted-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Loader from '../components/Loader.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  theme?: 'light' | 'stage' | 'night';
+  page: string;
+}
+const { title, description = site.description, theme = 'light', page } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.tagline}`;
+const themeColor = { light: '#f3f0e9', stage: '#06080c', night: '#0f1012' }[theme];
+---
+
+<!doctype html>
+<html lang="de-CH" data-theme={theme} data-page={page}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={themeColor} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_CH" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Freigabe für animierte Seitenwechsel. Sie muss direkt hier stehen: Der Browser prüft sie,
+         sobald der Seiteninhalt beginnt. Stünde sie nur im externen Stylesheet und wäre das noch
+         nicht geladen, bräche er den Übergang mit einer Fehlermeldung ab. -->
+    <style is:inline>
+      @view-transition {
+        navigation: auto;
+      }
+    </style>
+    <script is:inline>
+      // Loader bei jedem Seitenaufruf zeigen (siehe src/components/Loader.astro).
+      // Nach dem ersten Besuch der Sitzung läuft er in einer kürzeren Fassung.
+      document.documentElement.classList.add('loading');
+      try {
+        if (sessionStorage.getItem('tb-loaded')) document.documentElement.classList.add('loader-short');
+      } catch (e) {}
+      // Seitenwechsel: Bricht der Browser einen Übergang ab (z. B. weil sofort weitergeklickt wird),
+      // ist das kein Fehler. Ohne diese Zeilen erscheint dafür eine Meldung in der Konsole.
+      for (const type of ['pageswap', 'pagereveal']) {
+        addEventListener(type, (e) => {
+          const vt = e.viewTransition;
+          if (!vt) return;
+          vt.ready.catch(() => {});
+          vt.finished.catch(() => {});
+        });
+      }
+    </script>
+    <noscript>
+      <style>
+        [data-reveal] {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
+  </head>
+  <body id="top">
+    <Loader />
+    <a href="#inhalt" class="skip">Zum Inhalt springen</a>
+    <Nav />
+    <main id="inhalt">
+      <slot />
+    </main>
+    <Footer />
+
+    <dialog class="lightbox" data-lightbox>
+      <button class="lightbox__close" aria-label="Schliessen" data-lightbox-close>✕</button>
+      <figure>
+        <img alt="" />
+        <p></p>
+      </figure>
+    </dialog>
+    <div class="cursor" data-cursor-el aria-hidden="true"></div>
+
+    <script>
+      import '../scripts/app.ts';
+    </script>
+  </body>
+</html>

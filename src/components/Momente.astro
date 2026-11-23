@@ -1,0 +1,314 @@
+---
+// Foto-Tisch: Fotos zum Anfassen, Werfen, Umdrehen und Ordnen.
+// Inhalte kommen aus src/data/momente.ts, das Verhalten aus src/scripts/momente.ts.
+// Ohne JavaScript steht hier ein einfaches Raster.
+import { Image } from 'astro:assets';
+import { momente, themen } from '../data/momente';
+
+const items = momente();
+const vorhanden = themen.filter((t) => items.some((m) => m.thema === t));
+const layouts = [
+  ['streuen', 'Streuen'],
+  ['stapel', 'Stapel'],
+  ['faecher', 'Fächer'],
+  ['raster', 'Raster'],
+  ['thema', 'Nach Thema'],
+];
+---
+
+<section class="mom section section--tight" id="momente" data-momente>
+  <div class="container">
+    <div class="mom__head">
+      <div>
+        <p class="eyebrow" data-reveal>Momente</p>
+        <h2 class="t-xl" data-reveal>Fass sie an, dreh sie um.</h2>
+      </div>
+      <p class="mom__count" data-reveal><strong data-mom-count>{items.length}</strong> Fotos auf dem Tisch</p>
+    </div>
+
+    <div class="mom__bar" data-mom-bar>
+      <div class="mom__group" role="group" aria-label="Anordnung">
+        {
+          layouts.map(([id, label], i) => (
+            <button class="mom__btn" data-layout={id} aria-pressed={i === 0 ? 'true' : 'false'}>
+              {label}
+            </button>
+          ))
+        }
+        <button class="mom__btn mom__btn--mix" data-mom-mix title="Neu verteilen">Mischen ↻</button>
+      </div>
+      <div class="mom__group" role="group" aria-label="Thema">
+        <button class="mom__chip" data-filter="" aria-pressed="true">Alle</button>
+        {
+          vorhanden.map((t) => (
+            <button class="mom__chip" data-filter={t} aria-pressed="false">
+              {t}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="mom__table" data-mom-table>
+    {vorhanden.map((t) => <span class="mom__label" data-mom-label={t} aria-hidden="true">{t}</span>)}
+    {
+      items.map((m) => (
+        <figure class="mo" data-mo data-thema={m.thema} tabindex="0" role="button" aria-pressed="false" aria-label={`${m.titel}. ${m.text} Zum Umdrehen Eingabetaste drücken.`}>
+          <div class="mo__tilt">
+            <div class="mo__flip">
+              <div class="mo__face mo__front">
+                <Image src={m.foto.src} alt={m.foto.alt} widths={[320, 520]} sizes="(max-width: 760px) 46vw, 260px" loading="lazy" draggable="false" />
+                <figcaption>{m.titel}</figcaption>
+              </div>
+              <div class="mo__face mo__back" aria-hidden="true">
+                <small>{[m.thema, m.wo].filter(Boolean).join(' · ')}</small>
+                <strong>{m.titel}</strong>
+                {m.text && <p>{m.text}</p>}
+              </div>
+            </div>
+          </div>
+        </figure>
+      ))
+    }
+  </div>
+  <p class="mom__hint container" data-mom-hint>
+    <span class="mom__hint-fine">Ziehen und werfen · Doppelklick dreht ein Foto um</span>
+    <span class="mom__hint-touch">Antippen dreht um · lange drücken zum Verschieben</span>
+  </p>
+</section>
+
+<script>
+  import { initMomente } from '../scripts/momente';
+  document.querySelectorAll<HTMLElement>('[data-momente]').forEach((el) => initMomente(el));
+</script>
+
+<style>
+  .mom {
+    overflow: hidden;
+  }
+  .mom__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: clamp(1.2rem, 3vw, 2rem);
+  }
+  .mom__head .eyebrow {
+    margin-bottom: 1rem;
+  }
+  .mom__count {
+    color: var(--muted);
+  }
+  .mom__count strong {
+    color: var(--ink);
+    font-size: 1.3rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .mom__bar {
+    display: none;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.7rem 1.5rem;
+    margin-bottom: clamp(1rem, 2.4vw, 1.8rem);
+  }
+  .mom:global(.is-live) .mom__bar {
+    display: flex;
+  }
+  .mom__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .mom__btn,
+  .mom__chip {
+    padding: 0.55em 1em;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-weight: 600;
+    font-size: 0.92rem;
+    background: color-mix(in srgb, var(--card) 70%, transparent);
+    transition: background-color 0.25s, color 0.25s, border-color 0.25s, transform 0.35s var(--ease-spring);
+  }
+  .mom__btn:hover,
+  .mom__chip:hover {
+    border-color: var(--ink);
+  }
+  .mom__btn:active,
+  .mom__chip:active {
+    transform: scale(0.95);
+  }
+  .mom__btn[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: transparent;
+  }
+  .mom__chip[aria-pressed='true'] {
+    background: var(--gold);
+    color: #14110a;
+    border-color: transparent;
+  }
+  .mom__btn--mix {
+    border-style: dashed;
+  }
+
+  /* ---------- Tisch ---------- */
+  .mom__table {
+    --cw: 220px;
+    position: relative;
+    width: min(1400px, 100% - 2 * var(--gutter));
+    margin-inline: auto;
+    /* ohne JavaScript: schlichtes Raster */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(46%, 13rem), 1fr));
+    gap: clamp(0.8rem, 2vw, 1.4rem);
+  }
+  .mom:global(.is-live) .mom__table {
+    display: block;
+    width: 100%;
+    transition: height 0.7s var(--ease);
+    touch-action: pan-y;
+  }
+  .mo {
+    margin: 0;
+    width: 100%;
+    perspective: 900px;
+    border-radius: 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mom:global(.is-live) .mo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--cw);
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+    will-change: transform;
+    transition: opacity 0.4s, filter 0.4s;
+  }
+  .mo:global(.is-held) {
+    cursor: grabbing;
+  }
+  .mo:global(.is-dim) {
+    opacity: 0.22;
+    filter: grayscale(0.7);
+    pointer-events: none;
+  }
+  .mo__tilt {
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    transition: transform 0.18s ease-out;
+  }
+  .mo__flip {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.75s var(--ease-spring);
+  }
+  .mo:global(.is-flipped) .mo__flip {
+    transform: rotateY(180deg);
+  }
+  .mo__face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(13, 19, 34, 0.1), 0 22px 44px -22px rgba(13, 19, 34, 0.5);
+    transition: box-shadow 0.35s;
+  }
+  .mo:global(.is-held) .mo__face {
+    box-shadow: 0 4px 8px rgba(13, 19, 34, 0.14), 0 50px 80px -30px rgba(13, 19, 34, 0.6);
+  }
+  .mo__front {
+    padding: 0.6rem 0.6rem 0;
+  }
+  .mo__front :global(img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .mo figcaption {
+    margin: 0;
+    padding: 0.7rem 0.2rem 0.85rem;
+    color: #0d1322;
+    font-size: 0.86rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mo__back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg);
+    padding: 1rem;
+    display: grid;
+    align-content: center;
+    gap: 0.5rem;
+    background: #0f1012;
+    color: #f3efe6;
+    text-align: left;
+  }
+  .mo__back small {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #d9a94e;
+  }
+  .mo__back strong {
+    font-size: 1.15rem;
+    line-height: 1.15;
+  }
+  .mo__back p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #b9b2a5;
+  }
+  .mo:focus-visible {
+    outline: 2.5px solid var(--accent);
+    outline-offset: 4px;
+  }
+  .mom__label {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 600;
+    font-size: 1.05rem;
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .mom:global(.is-live) .mom__label {
+    display: block;
+  }
+  .mom:global([data-mode='thema']) .mom__label {
+    opacity: 1;
+  }
+  .mom__hint {
+    display: none;
+    margin-top: 1.2rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .mom:global(.is-live) .mom__hint {
+    display: block;
+  }
+  .mom__hint-touch {
+    display: none;
+  }
+  @media (hover: none), (pointer: coarse) {
+    .mom__hint-fine {
+      display: none;
+    }
+    .mom__hint-touch {
+      display: inline;
+    }
+  }
+</style>

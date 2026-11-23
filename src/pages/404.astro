@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base page="404" title="Seite nicht gefunden" description="Diese Seite gibt es nicht.">
+  <section class="nf">
+    <div class="nf__ball" data-cursor="grab"><div class="stage3d" data-viewer="golf"></div></div>
+    <div class="container nf__text">
+      <p class="eyebrow">Fehler 404</p>
+      <h1 class="t-page" data-split>Knapp daneben.</h1>
+      <p class="t-lead t-muted">Dieser Ball ist im Rough gelandet. Die Seite, die du suchst, gibt es hier nicht.</p>
+      <div class="btn-row">
+        <a class="btn" href="/">Zurück zum Abschlag <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initViewer } from '../scripts/three/viewer';
+  const v = document.querySelector<HTMLElement>('[data-viewer="golf"]');
+  if (v) {
+    try {
+      initViewer(v, 'golf', { scale: 1.5, tilt: 0.2 });
+    } catch {
+      v.parentElement!.hidden = true;
+    }
+  }
+</script>
+
+<style>
+  .nf {
+    min-height: 92svh;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+    padding: calc(var(--nav-h) + 2rem) 0 4rem;
+  }
+  .nf__ball {
+    position: relative;
+    width: min(60vw, 20rem);
+    aspect-ratio: 1;
+    cursor: grab;
+    touch-action: none;
+  }
+  .nf__text {
+    display: grid;
+    gap: 1.2rem;
+    justify-items: center;
+  }
+</style>

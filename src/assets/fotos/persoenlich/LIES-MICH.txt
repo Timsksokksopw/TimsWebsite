@@ -1,0 +1,9 @@
+Fotos für den Foto-Tisch auf der Seite «Über mich».
+
+Einfach ein Bild in diesen Ordner legen (jpg, png oder webp), dann erscheint es beim nächsten
+Start bzw. Build automatisch auf dem Tisch.
+
+Dateiname ohne Leerzeichen und Umlaute, zum Beispiel: skitag-flumserberg.jpg
+Der Dateiname wird zur Bildunterschrift («Skitag flumserberg»), solange in
+src/data/momente.ts nichts Genaueres steht. Dort lassen sich pro Foto Titel, Thema,
+Ort/Datum und ein Satz für die Rückseite eintragen.

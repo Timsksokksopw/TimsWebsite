@@ -1,0 +1,983 @@
+---
+import { Image } from 'astro:assets';
+import '@fontsource-variable/libre-bodoni/wght-italic.css'; // nur für die Signatur auf der Kopfplatte der Gitarre
+import Base from '../layouts/Base.astro';
+import Gallery from '../components/Gallery.astro';
+import { fotos, foto } from '../data/fotos';
+import { site } from '../data/site';
+import logoUrl from '../assets/logos/lostrios.svg?url';
+
+const kid = foto('tim-als-kind');
+const studio = foto('studio-session');
+const head = foto('ibanez-kopfplatte');
+const waldhof = foto('waldhof-live');
+const live = foto('live-drei-gitarren');
+const gallery = fotos('musik', 'band');
+
+const chords = ['Em', 'G', 'D', 'C', 'Am', 'A', 'E', 'E5'];
+const pedals = [
+  { id: 'drive', label: 'Drive', color: '#ff7a2e', hint: 'Verzerrer' },
+  { id: 'chorus', label: 'Chorus', color: '#a98bff', hint: 'Chorus: macht den Klang breit und schwebend' },
+  { id: 'delay', label: 'Delay', color: '#3fb8ff', hint: 'Delay: Echo im Takt' },
+  { id: 'wah', label: 'Wah', color: '#ffd23e', hint: 'Wah: Maus hoch und runter bewegt das Pedal' },
+  { id: 'reverb', label: 'Hall', color: '#2ce0d2', hint: 'Hall: grosser Raum' },
+];
+const how = [
+  ['Saiten & Griffbrett', 'Fahr mit der Maus über die Saiten oder klick aufs Griffbrett. Jeder Bund klingt so, wie er soll.'],
+  ['Akkorde', 'Wähl einen Akkord, die leuchtenden Punkte zeigen dir den Griff. Mit der Leertaste schlägst du ihn an.'],
+  ['Pedale & Tremolo', 'Verzerrer, Chorus, Delay, Wah und Hall lassen sich einzeln treten. Den Tremolohebel ziehst du direkt an der Gitarre.'],
+  ['Band & Looper', 'Lass Schlagzeug und Bass mitlaufen oder nimm eine Runde auf und spiel ein Solo darüber.'],
+];
+const lineup = [
+  ['Jarina', 'Gesang'],
+  ['Kevin', 'Lead-Gitarre'],
+  ['Tim', 'Lead-Gitarre & Solos'],
+  ['Moos', 'Bass'],
+  ['Lenny', 'Schlagzeug'],
+];
+const chronik = [
+  ['Jan 2023', 'Gründung', 'Drei Freunde starten eine Band. Alle drei spielen Gitarre, daher der Name.'],
+  ['6. Juli 2024', 'Waldhoffest', 'Auftritt am Waldhoffest in Andelfingen.'],
+  ['4. Jan 2025', 'Januar-Show', 'Volle Bühne, Hemd und Krawatte.'],
+  ['16. Aug 2025', 'Erste Studio-Session', 'Aufnahmen mit Access Audio Productions.'],
+  ['22. Okt 2025', '«Overdose of Everything»', 'Die ersten Songs erscheinen auf Spotify.'],
+  ['24. Mai 2026', 'Thur Pfingsten', 'Live auf dem Püntenhof in Andelfingen.'],
+  ['6. Juni 2026', 'Waldhoffest, die Zweite', 'Zurück auf der Bühne, auf der es angefangen hat.'],
+  ['Okt 2026', 'Zweite Studio-Session', 'Drei neue Songs im Kasten.'],
+];
+---
+
+<Base
+  page="musik"
+  theme="stage"
+  title="Musik"
+  description="Tim Biedermann spielt Lead-Gitarre bei der Hard-Rock-Band Los Trios. Hier kannst du seine Gitarre direkt im Browser spielen."
+>
+  <section class="mhero" data-music-host data-cursor="grab">
+    <div class="stage3d" data-music-stage></div>
+    <div class="mhero__top container">
+      <div class="mhero__text" data-music-text>
+        <p class="eyebrow" data-reveal>Musik · Lead-Gitarre bei Los Trios</p>
+        <h1 data-split>Dreh auf.</h1>
+        <p class="mhero__lead" data-reveal style="--d:3">
+          Meine Gitarre, nachgebaut in 3D. Schalt den Amp ein und spiel drauflos: Saiten, Griffbrett, Tremolohebel und Regler funktionieren
+          wie am Original.
+        </p>
+      </div>
+    </div>
+    <div class="mtip" data-music-tip aria-hidden="true"></div>
+
+    <div class="board container" data-music-ui data-cursor="none">
+      <div class="board__panel">
+        <div class="board__row">
+          <button class="amp" data-amp aria-pressed="false">
+            <span class="amp__led" aria-hidden="true"></span>
+            <span class="amp__txt"><b>Amp</b><i class="amp__off">einschalten</i><i class="amp__on">läuft</i></span>
+          </button>
+          <div class="lcd">
+            <canvas class="lcd__scope" data-scope width="320" height="96" aria-hidden="true"></canvas>
+            <div class="lcd__main">
+              <span class="lcd__label" data-lcd-label>Akkord</span>
+              <strong class="lcd__chord" data-lcd-chord aria-live="polite">offen</strong>
+            </div>
+            <svg class="lcd__chart" data-lcd-chart viewBox="0 0 64 60" aria-hidden="true"></svg>
+            <div class="lcd__notes" data-lcd-notes aria-hidden="true">
+              {[0, 1, 2, 3, 4, 5].map(() => <span />)}
+            </div>
+          </div>
+          <div class="chords" role="group" aria-label="Akkorde">
+            {
+              chords.map((c, i) => (
+                <button class="key" data-chord={c} aria-pressed="false">
+                  <kbd aria-hidden="true">{i + 1}</kbd>
+                  {c}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="board__row board__row--fx">
+          <div class="pedals" role="group" aria-label="Effektpedale">
+            {
+              pedals.map((p) => (
+                <button class="stomp" data-fx={p.id} style={`--c:${p.color}`} aria-pressed="false" title={p.hint}>
+                  <span class="stomp__led" aria-hidden="true" />
+                  <span class="stomp__name">{p.label}</span>
+                  <span class="stomp__sw" aria-hidden="true" />
+                </button>
+              ))
+            }
+          </div>
+          <div class="acts" role="group" aria-label="Spielhilfen">
+            <button class="key" data-strum title="Aktuellen Akkord anschlagen"><kbd aria-hidden="true">␣</kbd>Strum</button>
+            <button class="key" data-riff title="Spielt ein Riff"><kbd aria-hidden="true">W</kbd>Riff</button>
+            <button class="key key--solo" data-solo title="Spielt ein Solo-Lick"><kbd aria-hidden="true">Q</kbd>Solo</button>
+            <button class="key" data-mute aria-pressed="false" title="Palm Mute: Saiten mit dem Handballen abdämpfen"><kbd aria-hidden="true">T</kbd>Mute</button>
+            <button class="key" data-whammy title="Tremolohebel drücken, solange du hältst"><kbd aria-hidden="true">X</kbd>Dive</button>
+          </div>
+          <div class="jam" role="group" aria-label="Jam">
+            <button class="key key--loop" data-loop data-state="idle" title="Aufnehmen, in Schleife abspielen, löschen">
+              <kbd aria-hidden="true">E</kbd><span class="dot" aria-hidden="true"></span><span data-loop-label>Looper</span>
+            </button>
+            <button class="key key--band" data-band aria-pressed="false" title="Schlagzeug und Bass spielen mit, die Akkorde wechseln von selbst">
+              <kbd aria-hidden="true">R</kbd><span class="dot" aria-hidden="true"></span>Band
+            </button>
+            <div class="tempo">
+              <button data-tempo="-4" aria-label="Langsamer">−</button>
+              <span><output data-bpm>104</output> BPM</span>
+              <button data-tempo="4" aria-label="Schneller">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="board__hint">
+        <span>Über die Saiten fahren = spielen</span><span>Griffbrett anklicken = einzelne Töne</span><span>Hebel und Regler ziehen</span><span>Daneben ziehen = Gitarre drehen</span>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight how">
+    <div class="container">
+      <ol class="how__list">
+        {
+          how.map(([title, text], i) => (
+            <li data-reveal style={`--d:${i}`}>
+              <span class="how__n">0{i + 1}</span>
+              <h2 class="t-m">{title}</h2>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container grid-2 story">
+      <div class="stack" style="--gap:1.5rem">
+        <p class="eyebrow" data-reveal>Wie es anfing</p>
+        <h2 class="t-xl" data-split>Erst eine kleine Ibanez. Dann eine grössere.</h2>
+        <p class="t-lead t-muted" data-reveal>
+          Angefangen hat alles mit einer E-Gitarre, die fast so gross war wie ich, und einem Notenständer davor. Seither ist die Gitarre nicht mehr
+          weggekommen.
+        </p>
+        <p class="t-muted" data-reveal>
+          Heute spiele ich eine blaue Ibanez Prestige mit Tremolo, meistens laut und meistens mit Verzerrung. Am liebsten Hard Rock, Solos
+          inklusive. Mein grösster Einfluss: Guns N' Roses.
+        </p>
+        <ul class="chips" data-reveal>
+          <li class="chip">E-Gitarre</li>
+          <li class="chip">Lead & Solos</li>
+          <li class="chip">Hard Rock</li>
+          <li class="chip">Ibanez Prestige</li>
+          <li class="chip">Akustik für draussen</li>
+        </ul>
+      </div>
+      <div class="story__pics">
+        <figure class="story__a" data-tilt="6" data-reveal="scale">
+          <div class="media"><Image src={kid.src} alt={kid.alt} widths={[480, 800, 1200]} sizes="(max-width: 760px) 80vw, 34vw" /></div>
+          <figcaption>Damals</figcaption>
+        </figure>
+        <figure class="story__b" data-tilt="6" data-reveal="scale" style="--d:2">
+          <div class="media"><Image src={studio.src} alt={studio.alt} widths={[480, 800, 1200]} sizes="(max-width: 760px) 80vw, 34vw" /></div>
+          <figcaption>Heute, im Studio</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section band">
+    <div class="container">
+      <div class="band__head">
+        <img src={logoUrl} alt="Logo von Los Trios" class="band__logo" width="220" height="220" data-reveal="scale" />
+        <div class="stack" style="--gap:1.3rem">
+          <p class="eyebrow" data-reveal>Die Band</p>
+          <h2 class="t-page band__title" data-split>Los Trios</h2>
+          <p class="t-lead" data-reveal>
+            Hard Rock aus Andelfingen. Wir haben uns Los Trios genannt, weil wir mit drei Leuten angefangen haben. Inzwischen sind wir zu fünft,
+            der Name ist geblieben.
+          </p>
+          <div class="btn-row" data-reveal>
+            <a class="btn btn--accent" href={site.links.lostrios} target="_blank" rel="noopener">lostrios.ch <span class="arrow">↗</span></a>
+            <a class="btn btn--ghost" href={site.links.lostriosSpotify} target="_blank" rel="noopener">Spotify</a>
+            <a class="btn btn--ghost" href={site.links.lostriosInstagram} target="_blank" rel="noopener">Instagram</a>
+            <a class="btn btn--ghost" href={site.links.lostriosYoutube} target="_blank" rel="noopener">YouTube</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="band__grid">
+        <figure class="band__photo band__photo--wide" data-tilt="4" data-reveal="scale">
+          <div class="media"><Image src={waldhof.src} alt={waldhof.alt} widths={[700, 1100, 1600]} sizes="(max-width: 760px) 92vw, 60vw" /></div>
+        </figure>
+        <figure class="band__photo" data-tilt="5" data-reveal="scale" style="--d:1">
+          <div class="media"><Image src={live.src} alt={live.alt} widths={[480, 800, 1000]} sizes="(max-width: 760px) 92vw, 32vw" /></div>
+        </figure>
+      </div>
+
+      <div class="grid-2 band__info">
+        <div>
+          <h3 class="t-l" data-reveal>Besetzung</h3>
+          <ul class="lineup">
+            {
+              lineup.map(([name, role], i) => (
+                <li data-reveal style={`--d:${i}`} class={name === 'Tim' ? 'is-me' : ''}>
+                  <strong>{name}</strong>
+                  <span>{role}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div>
+          <h3 class="t-l" data-reveal>Chronik</h3>
+          <ol class="chronik">
+            {
+              chronik.map(([date, title, text], i) => (
+                <li data-reveal style={`--d:${i % 4}`}>
+                  <time>{date}</time>
+                  <div>
+                    <strong>{title}</strong>
+                    <p>{text}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section gear">
+    <div class="container grid-2">
+      <figure data-tilt="5" data-reveal="scale">
+        <div class="media gear__img"><Image src={head.src} alt={head.alt} widths={[600, 1000, 1600]} sizes="(max-width: 760px) 92vw, 46vw" /></div>
+      </figure>
+      <div class="stack" style="--gap:1.4rem">
+        <p class="eyebrow" data-reveal>Im Studio</p>
+        <h2 class="t-xl" data-split>Kopfhörer auf, Cap ins Gesicht, Take läuft.</h2>
+        <p class="t-lead t-muted" data-reveal>
+          Im Studio zählt jeder Ton. Unsere Songs nehmen wir mit Access Audio Productions auf. Nach der zweiten Session im Oktober 2026 sind
+          drei neue Songs fertig.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>Galerie</p>
+        <h2 class="t-l" data-split>Bühne, Studio, Bänkli</h2>
+      </div>
+      <Gallery items={gallery} />
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initMusic } from '../scripts/three/music';
+  const el = document.querySelector<HTMLElement>('[data-music-stage]');
+  const ui = document.querySelector<HTMLElement>('[data-music-ui]');
+  if (el && ui) {
+    try {
+      initMusic(el, ui);
+    } catch (err) {
+      console.warn('3D nicht verfügbar', err);
+      document.documentElement.classList.add('no-webgl');
+    }
+  }
+</script>
+
+<style>
+  .mhero {
+    position: relative;
+    min-height: max(100svh, 47rem);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-top: calc(var(--nav-h) + clamp(1.2rem, 3vw, 3rem));
+    padding-bottom: clamp(0.8rem, 2vw, 1.5rem);
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    background:
+      radial-gradient(50% 60% at 15% 0%, rgba(44, 224, 210, 0.16), transparent 70%),
+      radial-gradient(50% 60% at 88% 8%, rgba(255, 74, 46, 0.15), transparent 70%), var(--paper);
+  }
+  .mhero__top {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .mhero__text {
+    display: grid;
+    gap: 0.9rem;
+    width: fit-content;
+    max-width: min(100%, 30rem);
+  }
+  .mhero__text h1 {
+    font-size: clamp(2.6rem, min(6.2vw, 12vh), 5.8rem);
+    font-weight: 650;
+    line-height: 0.96;
+    letter-spacing: -0.028em;
+  }
+  .mhero__lead {
+    color: var(--muted);
+    font-size: clamp(1rem, 0.94rem + 0.42vw, 1.24rem);
+    line-height: 1.45;
+  }
+  .mtip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    padding: 0.4em 0.75em;
+    border-radius: 8px;
+    background: rgba(243, 239, 231, 0.96);
+    color: #0d1322;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .mtip:global(.is-on) {
+    opacity: 1;
+  }
+
+  /* ---------- Pedalboard ---------- */
+  .board {
+    position: relative;
+    z-index: 3;
+    grid-row: 3;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .board__panel {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    border-radius: 22px;
+    background: rgba(13, 16, 23, 0.82);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 30px 60px -30px #000;
+    cursor: default;
+  }
+  .board__row {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .board__row--fx {
+    justify-content: space-between;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .board__row--fx::-webkit-scrollbar,
+  .chords::-webkit-scrollbar {
+    display: none;
+  }
+  .pedals,
+  .acts,
+  .jam {
+    display: flex;
+    align-items: stretch;
+    gap: 0.4rem;
+    flex: none;
+  }
+
+  .amp {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 1.2rem 0.6rem 0.9rem;
+    border-radius: 14px;
+    background: #f3efe7;
+    color: #0d1322;
+    text-align: left;
+    transition: transform 0.4s var(--ease-spring);
+  }
+  .amp:active {
+    transform: scale(0.95);
+  }
+  .amp__led {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    background: #5b616d;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.25);
+    transition: background-color 0.2s, box-shadow 0.3s;
+  }
+  .amp[aria-pressed='true'] .amp__led {
+    background: #ff4a2e;
+    box-shadow: 0 0 0 4px rgba(255, 74, 46, 0.25), 0 0 18px 4px rgba(255, 74, 46, 0.8);
+  }
+  .amp:not([aria-pressed='true']) {
+    animation: nudge 2.4s var(--ease) infinite;
+  }
+  @keyframes nudge {
+    0%,
+    70%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(44, 224, 210, 0.7);
+    }
+    85% {
+      box-shadow: 0 0 0 12px rgba(44, 224, 210, 0);
+    }
+  }
+  .amp__txt {
+    display: grid;
+    line-height: 1.1;
+  }
+  .amp__txt b {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: -0.011em;
+  }
+  .amp__txt i {
+    font-style: normal;
+    font-size: 0.75rem;
+    opacity: 0.65;
+  }
+  .amp[aria-pressed='true'] .amp__off,
+  .amp:not([aria-pressed='true']) .amp__on {
+    display: none;
+  }
+
+  /* Anzeige: Akkord, Griffbild, gespielte Töne, Wellenform */
+  .lcd {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 1fr auto;
+    align-items: center;
+    column-gap: 0.8rem;
+    row-gap: 0.25rem;
+    width: 15.5rem;
+    flex: none;
+    padding: 0.45rem 0.6rem 0.45rem 0.9rem;
+    border-radius: 13px;
+    background: #04120f;
+    border: 1px solid rgba(44, 224, 210, 0.28);
+    box-shadow: inset 0 0 22px rgba(44, 224, 210, 0.12);
+    color: #b9fff6;
+    overflow: hidden;
+  }
+  .lcd__scope {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.32;
+  }
+  .lcd__main {
+    position: relative;
+    display: grid;
+    gap: 0.2rem;
+    line-height: 1;
+    min-width: 0;
+  }
+  .lcd__label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    white-space: nowrap;
+  }
+  .lcd__label :global(b) {
+    color: #fff;
+    background: rgba(44, 224, 210, 0.3);
+    padding: 0.05em 0.3em;
+    border-radius: 3px;
+  }
+  .lcd__chord {
+    font-family: var(--font-display);
+    font-size: 1.85rem;
+    font-weight: 650;
+    letter-spacing: -0.017em;
+    color: #eafffb;
+  }
+  .lcd__chart {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: 3.5rem;
+    height: 3.3rem;
+  }
+  .lcd__notes {
+    position: relative;
+    display: flex;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+  }
+  .lcd__notes span {
+    min-width: 1.5em;
+    text-align: center;
+    padding: 0.12em 0.1em;
+    border-radius: 4px;
+    background: rgba(44, 224, 210, 0.1);
+  }
+  .lcd__notes span:global(.is-hit) {
+    animation: hit 0.5s ease-out;
+  }
+  @keyframes hit {
+    0% {
+      background: #2ce0d2;
+      color: #04100f;
+      transform: translateY(-2px);
+    }
+  }
+
+  .chords {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+  .key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--line);
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    transition: transform 0.35s var(--ease-spring), background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .key:hover {
+    background: rgba(255, 255, 255, 0.14);
+  }
+  .key:active {
+    transform: scale(0.93) translateY(2px);
+  }
+  .key[aria-pressed='true'] {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: transparent;
+  }
+  .key kbd {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    padding: 0.15em 0.42em;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.12);
+    opacity: 0.8;
+  }
+  .key[aria-pressed='true'] kbd {
+    background: rgba(0, 0, 0, 0.16);
+  }
+  .key--solo {
+    background: #ff4a2e;
+    color: #fff;
+    border-color: transparent;
+  }
+  .key--solo:hover {
+    background: #ff6a52;
+  }
+  .key--loop {
+    min-width: 8.3rem;
+    justify-content: flex-start;
+  }
+
+  /* Effektpedale als kleine Bodentreter */
+  .stomp {
+    --c: #ff7a2e;
+    display: grid;
+    justify-items: center;
+    align-content: space-between;
+    gap: 0.28rem;
+    width: 3.9rem;
+    padding: 0.42rem 0.2rem 0.38rem;
+    border-radius: 12px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--c) 90%, #fff) 0%, color-mix(in srgb, var(--c) 76%, #000) 100%);
+    color: #10131a;
+    font-weight: 620;
+    font-size: 0.76rem;
+    line-height: 1;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -3px 0 rgba(0, 0, 0, 0.25), 0 6px 14px -8px #000;
+    filter: saturate(0.5) brightness(0.6);
+    transition: filter 0.25s, transform 0.3s var(--ease-spring);
+  }
+  .stomp:hover {
+    filter: saturate(0.7) brightness(0.78);
+  }
+  .stomp[aria-pressed='true'] {
+    filter: none;
+  }
+  .stomp:active {
+    transform: translateY(2px) scale(0.96);
+  }
+  .stomp__led {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: #3a0d08;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+  }
+  .stomp[aria-pressed='true'] .stomp__led {
+    background: #ff3b2e;
+    box-shadow: 0 0 10px 2px rgba(255, 59, 46, 0.9);
+  }
+  .stomp__sw {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff, #9aa0aa 55%, #5c616b);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: #4b515e;
+    flex: none;
+  }
+  .key--loop[data-state='rec'] {
+    border-color: #ff3b2e;
+  }
+  .key--loop[data-state='rec'] .dot {
+    background: #ff3b2e;
+    animation: blink 0.7s steps(2) infinite;
+  }
+  .key--loop[data-state='play'] {
+    border-color: #3bff8a;
+  }
+  .key--loop[data-state='play'] .dot {
+    background: #3bff8a;
+    box-shadow: 0 0 10px 2px rgba(59, 255, 138, 0.7);
+  }
+  .key--band[aria-pressed='true'] .dot {
+    background: #04100f;
+  }
+  .key--band:global(.is-beat) .dot {
+    animation: beat 0.22s ease-out;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0.2;
+    }
+  }
+  @keyframes beat {
+    0% {
+      transform: scale(2);
+    }
+  }
+  .tempo {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    white-space: nowrap;
+  }
+  .tempo button {
+    align-self: stretch;
+    padding: 0 0.7rem;
+    font-size: 1.05rem;
+    transition: background-color 0.2s;
+  }
+  .tempo button:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .tempo span {
+    min-width: 4.2rem;
+    text-align: center;
+  }
+  .board__hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.3rem;
+    font-size: 0.86rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .how__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(1.2rem, 3vw, 3rem);
+  }
+  .how__list li {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+  .how__n {
+    font-size: 0.86rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .how__list p {
+    color: var(--muted);
+    font-size: 0.96rem;
+  }
+
+  .story__pics {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    align-items: start;
+  }
+  .story__a {
+    grid-column: 1 / 9;
+    grid-row: 1;
+  }
+  .story__b {
+    grid-column: 5 / 13;
+    grid-row: 1;
+    margin-top: 42%;
+    box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.8);
+    border-radius: var(--radius);
+  }
+  .story__pics .media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .band {
+    background: #000;
+    border-block: 1px solid var(--line);
+  }
+  .band__head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: clamp(1.5rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  .band__logo {
+    width: clamp(8rem, 20vw, 17rem);
+    height: auto;
+    transition: transform 0.9s var(--ease-spring);
+  }
+  .band__logo:hover {
+    transform: rotate(-8deg) scale(1.06);
+  }
+  .band__title {
+    font-size: clamp(3.2rem, 11vw, 10rem);
+  }
+  .band__grid {
+    display: grid;
+    grid-template-columns: 1.9fr 1fr;
+    gap: clamp(0.8rem, 2vw, 1.6rem);
+    margin-top: clamp(2.5rem, 6vw, 5rem);
+  }
+  .band__photo .media {
+    height: 100%;
+    min-height: 18rem;
+  }
+  .band__photo--wide .media {
+    aspect-ratio: 3 / 2;
+  }
+  .band__info {
+    margin-top: clamp(3rem, 7vw, 6rem);
+  }
+  .lineup {
+    list-style: none;
+    padding: 0;
+    margin: 1.6rem 0 0;
+  }
+  .lineup li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+    transition: padding 0.4s var(--ease), color 0.3s;
+  }
+  .lineup li:hover {
+    padding-inline: 0.8rem;
+    color: var(--accent);
+  }
+  .lineup strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.3rem);
+    letter-spacing: -0.017em;
+  }
+  .lineup span {
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-align: right;
+  }
+  .lineup .is-me strong::after {
+    content: 'das bin ich';
+    font-size: 0.86rem;
+    font-weight: 600;
+    margin-left: 0.8rem;
+    padding: 0.3em 0.7em;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--on-accent);
+    vertical-align: middle;
+  }
+  .chronik {
+    list-style: none;
+    padding: 0;
+    margin: 1.6rem 0 0;
+    display: grid;
+  }
+  .chronik li {
+    display: grid;
+    grid-template-columns: 7.2rem 1fr;
+    gap: 1rem;
+    padding: 0.95rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .chronik time {
+    font-size: 0.86rem;
+    color: var(--accent);
+    padding-top: 0.25rem;
+    font-weight: 600;
+  }
+  .chronik strong {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    letter-spacing: -0.011em;
+  }
+  .chronik p {
+    color: var(--muted);
+    font-size: 0.93rem;
+  }
+  .gear__img {
+    aspect-ratio: 4 / 3;
+  }
+
+  @media (max-width: 1280px) {
+    .board__row--fx .key kbd {
+      display: none;
+    }
+    .key--loop {
+      min-width: 7.2rem;
+    }
+  }
+  @media (max-width: 1100px) {
+    .chords .key kbd {
+      display: none;
+    }
+    .stomp {
+      width: 3.4rem;
+    }
+    .lcd {
+      width: 13.6rem;
+    }
+    .how__list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-height: 800px) and (min-width: 761px) {
+    .board__hint {
+      display: none;
+    }
+    .mhero__lead {
+      font-size: 1rem;
+    }
+  }
+  @media (max-width: 760px) {
+    .mhero {
+      min-height: max(100svh, 46rem);
+      padding-top: calc(var(--nav-h) + 0.6rem);
+    }
+    .mhero__text {
+      gap: 0.5rem;
+    }
+    /* auf dem Handy gehört die Fläche der Gitarre; die Erklärung steht direkt darunter */
+    .mhero__lead,
+    .board__hint {
+      display: none;
+    }
+    .board__panel {
+      padding: 0.45rem;
+      gap: 0.4rem;
+      border-radius: 18px;
+    }
+    .board__row:first-child {
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .amp {
+      padding: 0.45rem 0.8rem;
+    }
+    .lcd {
+      flex: 1;
+      width: auto;
+      padding-block: 0.35rem;
+    }
+    .lcd__chord {
+      font-size: 1.5rem;
+    }
+    .lcd__chart {
+      width: 3rem;
+      height: 2.8rem;
+    }
+    .chords {
+      flex-basis: 100%;
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin-inline: -0.45rem;
+      padding-inline: 0.45rem;
+      touch-action: pan-x pan-y;
+      -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+      mask-image: linear-gradient(90deg, #000 88%, transparent);
+    }
+    .chords .key {
+      flex: none;
+      min-width: 3.2rem;
+      padding-block: 0.5rem;
+    }
+    .key kbd {
+      display: none;
+    }
+    .board__row--fx {
+      justify-content: flex-start;
+      margin-inline: -0.45rem;
+      padding-inline: 0.45rem;
+      touch-action: pan-x pan-y;
+      -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+      mask-image: linear-gradient(90deg, #000 88%, transparent);
+    }
+    .stomp {
+      width: 3.5rem;
+      padding-block: 0.35rem 0.3rem;
+    }
+    .stomp__sw {
+      width: 1rem;
+      height: 1rem;
+    }
+    .jam {
+      padding-right: 1.5rem;
+    }
+    .how__list {
+      grid-template-columns: 1fr 1fr;
+    }
+    .band__head {
+      grid-template-columns: 1fr;
+    }
+    .band__grid {
+      grid-template-columns: 1fr;
+    }
+    .story__b {
+      margin-top: 55%;
+    }
+  }
+</style>

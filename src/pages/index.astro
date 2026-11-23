@@ -1,0 +1,745 @@
+---
+// Startseite «Vom Tag in den Abend»: heller Einstieg mit dem Gitarrenfoto, dann wird es Abend
+// und die Goldstaub-Story beginnt (Wendico, Swisscom, Über mich, Freizeit). Zum Schluss wieder hell.
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import { foto } from '../data/fotos';
+import { site } from '../data/site';
+import { projekte } from '../data/projekte';
+import { TOTAL } from '../scripts/three/goldstaub/timeline';
+
+const pick = (name: string) => projekte.find((p) => p.name === name)!;
+const shotProjects = ['TTC Neuhausen', 'Mini Tank', 'SC Beauty Luxe', 'Elegant Society'].map(pick);
+const shots = await Promise.all(shotProjects.map(async (p) => (await getImage({ src: p.img, width: 1024, format: 'webp' })).src));
+const studio = foto('tim-studio');
+const portrait = (await getImage({ src: studio.src, width: 900, format: 'webp' })).src;
+const band = foto('waldhof-live');
+const heroFoto = foto('akustik-im-weinland');
+const heroSrc = (await getImage({ src: heroFoto.src, width: heroFoto.src.width, format: 'webp', quality: 86 })).src;
+
+const chapters = ['Start', 'Wendico', 'Swisscom', 'Über mich', 'Freizeit'];
+const notizen = [
+  ['Nov 2026', 'Wendico', 'Die Website für Mini Tank ist live.', '/wendico/'],
+  ['Aug 2026', 'Swisscom', 'Start ins vierte und letzte Lehrjahr.', '/arbeit/'],
+  ['Okt 2026', 'Los Trios', 'Zwei Tage im Studio, drei neue Songs aufgenommen.', '/musik/'],
+];
+---
+
+<Base page="home">
+  <section class="hero" data-hero>
+    <Image class="hero__img" src={heroFoto.src} alt="Akustikgitarre auf einer Holzbank, dahinter Hügel im Abendlicht" widths={[800, 1200, 1600]} sizes="100vw" loading="eager" fetchpriority="high" />
+    <div class="stage3d hero__gl" data-hero-gl data-photo={heroSrc}></div>
+    <p class="hero__word" aria-hidden="true">Biedermann</p>
+
+    <div class="hero__text">
+      <h1 class="hero__name">Tim Biedermann</h1>
+      <p class="hero__lead">Gründer der Digitalagentur Wendico, Plattformentwickler bei Swisscom und Lead-Gitarrist bei Los Trios.</p>
+      <div class="btn-row">
+        <a class="btn hero__btn" href={site.links.wendicoTermin} target="_blank" rel="noopener">Projekt anfragen <span class="arrow">↗</span></a>
+        <a class="btn hero__btn hero__btn--glass" href="/ueber-mich/">Mehr über mich</a>
+      </div>
+    </div>
+    <p class="hero__caption" aria-hidden="true">Gitarre, Bänkli, Abendlicht.</p>
+  </section>
+
+  <!-- Es wird Abend: von hell zu dunkel, Goldfunken steigen auf -->
+  <section class="dusk" data-dusk>
+    <span class="dusk__dark" data-nav-tone="dark"></span>
+    <canvas class="dusk__sparks" data-dusk-canvas aria-hidden="true"></canvas>
+    <p class="dusk__line">Das ist, woran ich <em>arbeite</em>.</p>
+  </section>
+
+  <section class="gd" data-gd data-nav-tone="dark" data-shots={JSON.stringify(shots)} data-portrait={portrait} style={`--gd-u:${TOTAL}`}>
+    <div class="gd__fade" aria-hidden="true"></div>
+    <div class="gd__sticky">
+      <div class="stage3d gd__stage" data-gd-stage></div>
+
+      <div class="gd__grid">
+        <div class="gd__copies">
+          <article class="gd__copy is-on" data-ch="0">
+            <div class="gd__poster"><Logo size={180} /></div>
+            <p class="gd__kicker">Kurz gesagt</p>
+            <h1 class="gd__title gd__title--hero">Ich baue Websites, Software und <em>Plattformen</em>.</h1>
+            <p class="gd__text">Mitgründer der Digitalagentur Wendico und angehender Plattformentwickler bei Swisscom.</p>
+            <div class="btn-row">
+              <a class="btn btn--accent" href="/wendico/">Wendico ansehen <span class="arrow">→</span></a>
+              <a class="btn btn--ghost" href="/arbeit/">Swisscom</a>
+            </div>
+          </article>
+
+          <article class="gd__copy" data-ch="1">
+            <div class="gd__poster"><Image src={shotProjects[0].img} alt={`Website ${shotProjects[0].name}`} widths={[480, 900]} sizes="90vw" /></div>
+            <p class="gd__kicker">01 · Wendico</p>
+            <h2 class="gd__title">Meine Agentur für <em>digitale</em> Produkte.</h2>
+            <p class="gd__text">
+              Mit Wendico setze ich zusammen mit Panat Ruangsri Websites, Software und SaaS-Lösungen um. Bisher sind {projekte.length} Projekte live.
+            </p>
+            <ul class="gd__list">
+              <li>Websites</li>
+              <li>Web-Apps, Portale & SaaS</li>
+              <li>KI-Lösungen</li>
+              <li>Umsatzsysteme</li>
+            </ul>
+            <a class="gd__more" href="/wendico/">Zur Wendico-Seite <span aria-hidden="true">→</span></a>
+          </article>
+
+          <article class="gd__copy" data-ch="2">
+            <p class="gd__kicker">02 · Swisscom</p>
+            <h2 class="gd__title">Plattformen, die <em>einfach</em> laufen.</h2>
+            <p class="gd__text">
+              Bei Swisscom lerne ich Informatiker EFZ mit Fachrichtung Plattformentwicklung. Ich bin im 4. Lehrjahr und mache daneben die Berufsmatura.
+            </p>
+            <ul class="gd__list">
+              <li>Netzwerk</li>
+              <li>Cloud</li>
+              <li>Plattform</li>
+              <li>Web & Apps</li>
+            </ul>
+            <a class="gd__more" href="/arbeit/">Mehr zur Arbeit <span aria-hidden="true">→</span></a>
+          </article>
+
+          <article class="gd__copy" data-ch="3">
+            <div class="gd__poster"><Image src={studio.src} alt="Portrait von Tim Biedermann" widths={[480, 900]} sizes="90vw" /></div>
+            <p class="gd__kicker">03 · Über mich</p>
+            <h2 class="gd__title">Der Mensch <em>dahinter</em>.</h2>
+            <p class="gd__text">Neugierig, konzentriert bei der Sache und gern mit Verantwortung im Team. Ich mag Dinge, die man bauen und fertig machen kann.</p>
+            <a class="gd__more" href="/ueber-mich/">Mehr über mich <span aria-hidden="true">→</span></a>
+          </article>
+
+          <article class="gd__copy" data-ch="4">
+            <div class="gd__poster"><Image src={band.src} alt={band.alt} widths={[480, 900]} sizes="90vw" /></div>
+            <p class="gd__kicker">04 · Freizeit</p>
+            <h2 class="gd__title">Nach <em>Feierabend</em>.</h2>
+            <p class="gd__text">Lead-Gitarre bei Los Trios, Ski im Winter, Tischtennis das ganze Jahr.</p>
+            <p class="gd__links">
+              <a class="gd__more" href="/musik/">Musik <span aria-hidden="true">→</span></a>
+              <a class="gd__more" href="/sport/">Sport <span aria-hidden="true">→</span></a>
+            </p>
+          </article>
+        </div>
+        <div class="gd__slot" data-gd-slot></div>
+      </div>
+
+      <nav class="gd__index" aria-label="Kapitel">
+        {
+          chapters.map((c, i) => (
+            <button data-gd-go={i} aria-current={i === 0 ? 'step' : undefined} aria-label={`Kapitel ${i + 1}: ${c}`}>
+              <i>{c}</i>
+              <span></span>
+            </button>
+          ))
+        }
+      </nav>
+      <p class="gd__hint" data-gd-hint aria-hidden="true">Scrollen<span></span></p>
+    </div>
+  </section>
+
+  <div class="dawn" aria-hidden="true"><span data-nav-tone="dark"></span></div>
+
+  <section class="section section--tight after">
+    <div class="container after__grid">
+      <div>
+        <h2 class="after__title serif" data-reveal>Gerade aktuell</h2>
+        <ul class="notes">
+          {
+            notizen.map(([date, tag, text, href], i) => (
+              <li data-reveal style={`--d:${i}`}>
+                <a href={href}>
+                  <span class="notes__meta">
+                    {date} · {tag}
+                  </span>
+                  <span class="notes__text">{text}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <a class="cta" href={site.links.wendicoTermin} target="_blank" rel="noopener" data-reveal="scale">
+        <span class="cta__label">Projekt im Kopf?</span>
+        <strong>Lass uns 30 Minuten darüber reden.</strong>
+        <span class="cta__go">Erstgespräch auf wendico.ch buchen <i aria-hidden="true">↗</i></span>
+      </a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initGoldstaub } from '../scripts/three/goldstaub';
+  import { initHero } from '../scripts/three/hero';
+  import { initDusk } from '../scripts/dusk';
+
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const heroGl = document.querySelector<HTMLElement>('[data-hero-gl]');
+  if (hero && heroGl) {
+    try {
+      initHero(heroGl, hero, { photo: heroGl.dataset.photo!, word: 'BIEDERMANN', focus: [0.5, 0.43], focusNarrow: [0.4, 0.5] });
+    } catch (err) {
+      console.warn('3D nicht verfügbar', err);
+    }
+  }
+  const dusk = document.querySelector<HTMLElement>('[data-dusk]');
+  const duskCanvas = document.querySelector<HTMLCanvasElement>('[data-dusk-canvas]');
+  if (dusk && duskCanvas) initDusk(dusk, duskCanvas);
+
+  const section = document.querySelector<HTMLElement>('[data-gd]');
+  if (section) {
+    try {
+      initGoldstaub(section, { shots: JSON.parse(section.dataset.shots ?? '[]'), portrait: section.dataset.portrait ?? '' });
+    } catch (err) {
+      // kein WebGL: die Kapitel stehen einfach untereinander
+      console.warn('3D nicht verfügbar', err);
+      section.classList.add('gd--static');
+    }
+  }
+</script>
+
+<style>
+  /* ---------- Tag: das Gitarrenfoto im Rahmen ---------- */
+  .hero {
+    --frame: clamp(0.4rem, 0.9vw, 0.8rem);
+    position: relative;
+    margin: var(--frame);
+    height: calc(100svh - 2 * var(--frame));
+    min-height: 34rem;
+    border-radius: clamp(18px, 2vw, 30px);
+    overflow: hidden;
+    background: var(--paper-2);
+    display: grid;
+    align-items: end;
+    isolation: isolate;
+  }
+  .hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 43%;
+    z-index: -2;
+  }
+  .hero__gl {
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.8s;
+  }
+  .hero:global(.is-gl) .hero__gl {
+    opacity: 1;
+  }
+  /* Schriftzug ohne WebGL: schlicht durchscheinend */
+  .hero__word {
+    position: absolute;
+    top: 10%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: 15.4vw;
+    line-height: 1;
+    letter-spacing: -0.019em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .hero:global(.is-gl) .hero__word {
+    display: none;
+  }
+  /* Damit der Text ohne Kasten lesbar bleibt: weicher Schatten nur am unteren Bildrand */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 48% 0 0 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(10, 12, 16, 0.66) 0%, rgba(10, 12, 16, 0.3) 45%, transparent 100%);
+  }
+  .hero__text {
+    padding: clamp(1.2rem, 3.4vw, 3.4rem);
+    max-width: 46rem;
+    display: grid;
+    gap: clamp(0.8rem, 1.4vw, 1.2rem);
+    color: #fff;
+    text-shadow: 0 1px 18px rgba(0, 0, 0, 0.4);
+  }
+  .hero__name {
+    font-size: clamp(2.4rem, 5.2vw, 4.8rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .hero__lead {
+    max-width: 32em;
+    font-size: clamp(1.05rem, 0.98rem + 0.45vw, 1.35rem);
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.94);
+  }
+  .hero__btn {
+    --btn-bg: #f0b244;
+    --btn-fg: #14110a;
+    text-shadow: none;
+  }
+  .hero__btn::before {
+    background: #fff;
+  }
+  .hero__btn:hover {
+    color: #14110a;
+  }
+  .hero__btn--glass {
+    --btn-bg: rgba(255, 255, 255, 0.14);
+    --btn-fg: #fff;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .hero__caption {
+    position: absolute;
+    right: clamp(1rem, 2.4vw, 2rem);
+    bottom: clamp(1rem, 2.4vw, 2rem);
+    font-style: normal;
+    font-size: 1rem;
+    color: #fff;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+    writing-mode: vertical-rl;
+    rotate: 180deg;
+    font-weight: 600;
+  }
+
+  /* ---------- Dämmerung ---------- */
+  .dusk {
+    position: relative;
+    height: 95svh;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--paper) 0%, #f7e0c0 20%, #efab80 40%, #ad5d66 58%, #3b2738 77%, #0f1012 100%);
+    display: grid;
+    align-items: end;
+    justify-items: center;
+  }
+  .dusk__dark {
+    position: absolute;
+    inset: 52% 0 0 0;
+    pointer-events: none;
+  }
+  .dusk__sparks {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .dusk__line {
+    position: relative;
+    margin-bottom: 15svh;
+    padding-inline: var(--gutter);
+    max-width: 16em;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 4.6vw, 4rem);
+    letter-spacing: -0.022em;
+    line-height: 1.02;
+    color: #f3efe6;
+  }
+  .dusk__line :global(em),
+  .dusk__line em {
+    font-weight: 500;
+    color: #e9b458;
+  }
+  /* ---------- Morgen: zurück ins Helle ---------- */
+  .dawn {
+    position: relative;
+    height: 55svh;
+    background: linear-gradient(180deg, #0f1012 0%, #3b2738 26%, #c98a6e 58%, #f5dfc4 80%, var(--paper) 100%);
+  }
+  .dawn span {
+    position: absolute;
+    inset: 0 0 62% 0;
+  }
+
+  /* ---------- Abend: die Goldstaub-Story mit eigenen, dunklen Farben ---------- */
+  .gd {
+    --paper: #0f1012;
+    --paper-2: #17181b;
+    --card: #17181b;
+    --ink: #f3efe6;
+    --muted: #a8a195;
+    --line: rgba(255, 255, 255, 0.13);
+    --gold: #d9a94e;
+    --accent: #d9a94e;
+    --on-accent: #14110a;
+    color-scheme: dark;
+    color: var(--ink);
+    background: var(--paper);
+    position: relative;
+    height: calc((var(--gd-u) + 1) * 100svh);
+  }
+  .gd__fade {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 26svh;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(180deg, #0f1012 0%, rgba(15, 16, 18, 0.6) 40%, transparent 100%);
+  }
+  .gd:global(.gd--static) .gd__fade {
+    display: none;
+  }
+  .gd__sticky {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+  .gd__grid {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    width: min(1400px, 100% - 2 * var(--gutter));
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(20rem, 0.92fr) 1.08fr;
+    gap: clamp(1rem, 4vw, 4rem);
+    align-items: center;
+    padding-block: calc(var(--nav-h) + 0.5rem) 2.6rem;
+    padding-right: clamp(0rem, 3vw, 3rem);
+    pointer-events: none;
+  }
+  .gd__copies {
+    display: grid;
+    align-items: center;
+  }
+  .gd__copy {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: clamp(0.9rem, 1.8vw, 1.4rem);
+    justify-items: start;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .gd__copy:first-child {
+    opacity: 1;
+  }
+  .gd__copy:global(.is-on) {
+    pointer-events: auto;
+  }
+  .gd__slot {
+    height: 100%;
+    min-height: 0;
+  }
+  .gd__poster {
+    display: none;
+  }
+  .gd__kicker {
+    font-style: normal;
+    font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .gd__title {
+    font-size: clamp(2.2rem, min(4.7vw, 8.5vh), 4.8rem);
+    font-weight: 620;
+    letter-spacing: -0.025em;
+    line-height: 1.06;
+    max-width: 12em;
+  }
+  .gd__title--hero {
+    font-size: clamp(2.5rem, min(5.5vw, 9.5vh), 5.6rem);
+  }
+  .gd__title :global(em) {
+    font-weight: 500;
+    letter-spacing: -0.017em;
+    color: var(--gold);
+  }
+  .gd__text {
+    max-width: 30em;
+    font-size: clamp(1.02rem, 0.96rem + 0.4vw, 1.3rem);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .gd__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.5rem;
+    font-weight: 600;
+  }
+  .gd__list li::before {
+    content: '';
+    display: inline-block;
+    width: 0.46em;
+    height: 0.46em;
+    margin-right: 0.55em;
+    background: var(--gold);
+    rotate: 45deg;
+    translate: 0 -0.1em;
+  }
+  .gd__more {
+    font-weight: 600;
+    padding-bottom: 0.25em;
+    border-bottom: 1.5px solid var(--gold);
+    transition: color 0.3s;
+  }
+  .gd__more span {
+    display: inline-block;
+    transition: transform 0.4s var(--ease);
+  }
+  .gd__more:hover {
+    color: var(--gold);
+  }
+  .gd__more:hover span {
+    transform: translateX(5px);
+  }
+  .gd__links {
+    display: flex;
+    gap: 1.6rem;
+  }
+
+  .gd__index {
+    position: absolute;
+    z-index: 2;
+    right: clamp(0.6rem, 1.6vw, 1.6rem);
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    gap: 0.2rem;
+    justify-items: end;
+  }
+  .gd__index button {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.45rem 0.2rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .gd__index i {
+    font-style: normal;
+    opacity: 0;
+    translate: 6px 0;
+    transition: opacity 0.3s, translate 0.4s var(--ease);
+  }
+  .gd__index span {
+    width: 1.1rem;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    opacity: 0.5;
+    transition: width 0.5s var(--ease), background-color 0.3s, opacity 0.3s;
+  }
+  .gd__index button:hover i,
+  .gd__index button:focus-visible i,
+  .gd__index button[aria-current] i {
+    opacity: 1;
+    translate: 0 0;
+  }
+  .gd__index button[aria-current] {
+    color: var(--ink);
+  }
+  .gd__index button[aria-current] span {
+    width: 2.2rem;
+    background: var(--gold);
+    opacity: 1;
+  }
+  .gd__hint {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    bottom: 1.1rem;
+    translate: -50% 0;
+    display: grid;
+    justify-items: center;
+    gap: 0.45rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .gd__hint span {
+    width: 1.5px;
+    height: 1.6rem;
+    background: linear-gradient(var(--gold), transparent);
+    animation: drip 1.8s var(--ease) infinite;
+    transform-origin: top;
+  }
+  @keyframes drip {
+    0% {
+      transform: scaleY(0);
+    }
+    60%,
+    100% {
+      transform: scaleY(1);
+      opacity: 0;
+    }
+  }
+
+  /* ---------- ohne WebGL: Kapitel untereinander, mit Bildern ---------- */
+  .gd:global(.gd--static) {
+    height: auto;
+  }
+  .gd:global(.gd--static) .gd__sticky {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+  .gd:global(.gd--static) .gd__stage,
+  .gd:global(.gd--static) .gd__slot,
+  .gd:global(.gd--static) .gd__index,
+  .gd:global(.gd--static) .gd__hint {
+    display: none;
+  }
+  .gd:global(.gd--static) .gd__grid,
+  .gd:global(.gd--static) .gd__copies {
+    display: block;
+    pointer-events: auto;
+  }
+  .gd:global(.gd--static) .gd__copy {
+    opacity: 1 !important;
+    transform: none !important;
+    padding-block: clamp(2.5rem, 7vw, 5rem);
+    border-bottom: 1px solid var(--line);
+  }
+  .gd:global(.gd--static) .gd__poster {
+    display: block;
+    width: min(100%, 26rem);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* ---------- nach der Story ---------- */
+  .after__grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+  }
+  .after__title {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+  .notes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .notes li {
+    border-top: 1px solid var(--line);
+  }
+  .notes li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .notes a {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1.1rem 0;
+    transition: padding 0.5s var(--ease);
+  }
+  .notes a:hover {
+    padding-left: 0.8rem;
+  }
+  .notes__meta {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gold);
+  }
+  .notes__text {
+    font-size: 1.08rem;
+    line-height: 1.4;
+  }
+  .cta {
+    display: grid;
+    gap: 0.6rem;
+    padding: clamp(1.8rem, 4.5vw, 4rem);
+    border-radius: var(--radius);
+    background: var(--card);
+    border: 1px solid var(--line);
+    transition: transform 0.6s var(--ease), border-color 0.4s;
+  }
+  .cta:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold);
+  }
+  .cta__label {
+    font-style: normal;
+    font-size: 1.25rem;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .cta strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 4.4vw, 3.8rem);
+    font-weight: 620;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+  .cta__go {
+    margin-top: 0.8rem;
+    font-weight: 600;
+    color: var(--gold);
+  }
+  .cta__go i {
+    font-style: normal;
+    display: inline-block;
+    transition: transform 0.5s var(--ease-spring);
+  }
+  .cta:hover .cta__go i {
+    transform: translate(0.2em, -0.2em);
+  }
+
+  @media (max-width: 900px) {
+    /* Handy: Objekt oben, Text unten */
+    .gd__grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 0.6rem;
+      padding-block: calc(var(--nav-h) + 0.2rem) 2.4rem;
+      padding-right: 0;
+    }
+    .gd__slot {
+      order: 1;
+    }
+    .gd__copies {
+      order: 2;
+      align-items: end;
+    }
+    .gd__copy {
+      gap: 0.75rem;
+    }
+    .gd__title {
+      font-size: clamp(1.9rem, 8.4vw, 3rem);
+    }
+    .gd__title--hero {
+      font-size: clamp(2rem, 9vw, 3.2rem);
+    }
+    .gd__text {
+      font-size: 1rem;
+    }
+    .gd__index i {
+      display: none;
+    }
+    .gd__index {
+      top: 34%;
+    }
+    .gd__hint {
+      display: none;
+    }
+    .hero__word {
+      top: 15%;
+    }
+    .hero__caption {
+      display: none;
+    }
+    .dusk {
+      height: 80svh;
+    }
+    .after__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

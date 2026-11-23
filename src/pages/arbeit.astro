@@ -1,0 +1,330 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { projekte } from '../data/projekte';
+import wendicoLogo from '../assets/logos/wendico.png';
+
+const layers = [
+  { n: '04', title: 'Web & Apps', text: 'Was am Ende bei den Menschen ankommt: Oberflächen, Websites, Anwendungen.', chips: ['HTML', 'CSS', 'JavaScript', 'Java'] },
+  { n: '03', title: 'Plattform', text: 'Versionieren, automatisieren, ausrollen. Damit Änderungen sicher live gehen.', chips: ['Git', 'CI/CD', 'Python'] },
+  { n: '02', title: 'Cloud', text: 'Infrastruktur, die man nicht mehr anfassen muss, sondern beschreibt.', chips: ['AWS', 'Hosting'] },
+  { n: '01', title: 'Netzwerk', text: 'Die Basis, auf der alles andere steht.', chips: ['Subnetting', 'IP', 'Firewall'] },
+];
+const stationen = [
+  ['Aug 2023', 'First Steps', 'Einstieg bei Swisscom: Prozesse, Werkzeuge, erste Aufgaben.'],
+  ['2023 – 2024', 'Cablex Field Service', 'Mit Technikern unterwegs zu Kundinnen und Kunden. Dort habe ich gelernt, wie das Internet ins Haus kommt.'],
+  ['2024', 'Lernender Hub', 'Webentwicklung und Frontend-Design vertieft.'],
+  ['2024 – 2025', 'Twint Testing Team', 'Mobile Apps getestet: Qualitätssicherung, Bug-Tracking, agile Zusammenarbeit.'],
+  ['danach', 'NexCC', 'Erst im Support und in der Kundenbetreuung, dann als Host mit eigenem Projekt und einem Lernenden, den ich als Mentor begleite.'],
+];
+---
+
+<Base
+  page="arbeit"
+  title="Arbeit"
+  description="Tim Biedermann ist Informatiker Plattformentwicklung im 4. Lehrjahr bei Swisscom: Netzwerk, Cloud, Plattform und Web."
+>
+  <section class="page-hero">
+    <div class="container whero">
+      <div class="stack" style="--gap:1.3rem">
+        <p class="eyebrow" data-reveal>Arbeit · Swisscom, seit August 2023</p>
+        <h1 class="t-page" data-split>Plattformen bauen.</h1>
+        <p class="t-lead t-muted whero__lead" data-reveal style="--d:3">
+          Bei Swisscom mache ich die Lehre als Informatiker EFZ mit Fachrichtung Plattformentwicklung. Ich bin im 4. Lehrjahr, mache daneben die
+          Berufsmatura und gehe an der TBZ in Zürich zur Schule.
+        </p>
+        <div class="btn-row" data-reveal style="--d:4">
+          <a class="btn" href="#swisscom">Der Stack <span class="arrow">↓</span></a>
+          <a class="btn btn--ghost" href="#stationen">Stationen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight" id="swisscom">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>Der Stack</p>
+        <h2 class="t-xl" data-split>Eine Plattform besteht aus Schichten.</h2>
+        <p class="t-lead t-muted" data-reveal>Hier sind die, mit denen ich arbeite. Fahr über eine Ebene, um hineinzuschauen.</p>
+      </div>
+
+      <div class="stackwrap">
+        <div class="stackwrap__canvas card">
+          <div class="stage3d" data-stack></div>
+        </div>
+        <ol class="layers">
+          {
+            layers.map((l, i) => (
+              <li class="layer" data-layer={layers.length - 1 - i} tabindex="0" data-reveal style={`--d:${i}`}>
+                <span class="layer__n">{l.n}</span>
+                <div>
+                  <h3 class="t-m">{l.title}</h3>
+                  <p>{l.text}</p>
+                  <ul class="chips">
+                    {l.chips.map((c) => <li class="chip">{c}</li>)}
+                  </ul>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div class="grid-2 stations" id="stationen">
+        <div class="stack" style="--gap:1.2rem">
+          <h3 class="t-l" data-reveal>Stationen in der Lehre</h3>
+          <p class="t-muted" data-reveal>
+            Bei Swisscom wechseln Lernende alle paar Monate das Projekt. So habe ich in kurzer Zeit ziemlich viele Seiten des Unternehmens gesehen.
+          </p>
+          <p data-reveal><a class="link" href="https://timswebi.ch/home_new.html" target="_blank" rel="noopener">Ausführlicher auf timswebi.ch ↗</a></p>
+        </div>
+        <ol class="timeline">
+          {
+            stationen.map(([date, title, text], i) => (
+              <li data-reveal style={`--d:${i % 3}`}>
+                <time>{date}</time>
+                <strong>{title}</strong>
+                <p>{text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container grid-2">
+      <div class="stack" style="--gap:1.2rem">
+        <p class="eyebrow" data-reveal>Werkzeugkasten</p>
+        <h2 class="t-l" data-split>Womit ich arbeite</h2>
+        <p class="t-muted" data-reveal>Kein Prozentbalken, nur das, was ich wirklich regelmässig in der Hand habe.</p>
+      </div>
+      <div class="tools">
+        <div data-reveal>
+          <h3>Web</h3>
+          <ul class="chips">
+            {['HTML', 'CSS', 'JavaScript', 'Three.js', 'PHP-Formulare', 'SEO'].map((c) => <li class="chip">{c}</li>)}
+          </ul>
+        </div>
+        <div data-reveal style="--d:1">
+          <h3>Plattform & Betrieb</h3>
+          <ul class="chips">
+            {['Git', 'GitHub Actions', 'AWS', 'Cloudflare', 'Python', 'Netzwerk', 'Firewall'].map((c) => <li class="chip">{c}</li>)}
+          </ul>
+        </div>
+        <div data-reveal style="--d:2">
+          <h3>Sprachen</h3>
+          <ul class="chips">
+            {['Deutsch', 'Englisch', 'Französisch'].map((c) => <li class="chip">{c}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <a class="teaser" href="/wendico/" data-reveal>
+        <Image src={wendicoLogo} alt="" width={120} class="teaser__logo" />
+        <span class="teaser__text">
+          <em>Und daneben</em>
+          <strong>Wendico, meine eigene Digitalagentur.</strong>
+          <span>Websites, Software und SaaS, {projekte.length} Projekte bisher.</span>
+        </span>
+        <span class="teaser__go" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initStack } from '../scripts/three/work';
+
+  const stackEl = document.querySelector<HTMLElement>('[data-stack]');
+  const layerEls = Array.from(document.querySelectorAll<HTMLElement>('[data-layer]')).sort((a, b) => Number(a.dataset.layer) - Number(b.dataset.layer));
+  try {
+    if (stackEl) initStack(stackEl, layerEls);
+  } catch (err) {
+    console.warn('3D nicht verfügbar', err);
+    document.documentElement.classList.add('no-webgl');
+  }
+</script>
+
+<style>
+  .whero__lead {
+    max-width: 34em;
+  }
+  .stackwrap {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(1.2rem, 3vw, 3rem);
+    align-items: stretch;
+  }
+  .stackwrap__canvas {
+    position: relative;
+    min-height: clamp(24rem, 52vw, 40rem);
+    padding: 0;
+    overflow: hidden;
+    background:
+      radial-gradient(70% 60% at 50% 40%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 70%), var(--card);
+  }
+  .layers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.6rem;
+    align-content: center;
+  }
+  .layer {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.1rem;
+    padding: clamp(1rem, 1.8vw, 1.5rem);
+    border-radius: var(--radius-s);
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--card) 60%, transparent);
+    cursor: pointer;
+    transition: background-color 0.35s, border-color 0.35s, transform 0.5s var(--ease), box-shadow 0.4s;
+  }
+  .layer__n {
+    font-size: 0.86rem;
+    color: var(--muted);
+    padding-top: 0.3rem;
+    font-weight: 600;
+  }
+  .layer p {
+    color: var(--muted);
+    font-size: 0.96rem;
+    margin: 0.35rem 0 0.8rem;
+  }
+  .layer:global(.is-active) {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: transparent;
+    transform: translateX(-10px);
+    box-shadow: 0 24px 50px -30px rgba(13, 19, 34, 0.7);
+  }
+  .layer:global(.is-active) p,
+  .layer:global(.is-active) .layer__n {
+    color: rgba(243, 240, 233, 0.72);
+  }
+  .layer:global(.is-active) .chip {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: transparent;
+  }
+  .stations {
+    margin-top: clamp(3.5rem, 8vw, 7rem);
+  }
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 1.6rem;
+    border-left: 2px solid var(--line);
+    display: grid;
+    gap: 1.8rem;
+  }
+  .timeline li {
+    position: relative;
+    display: grid;
+    gap: 0.25rem;
+  }
+  .timeline li::before {
+    content: '';
+    position: absolute;
+    left: calc(-1.6rem - 7px);
+    top: 0.3rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2.5px solid var(--accent);
+    transition: transform 0.4s var(--ease-spring), background-color 0.3s;
+  }
+  .timeline li:hover::before {
+    transform: scale(1.5);
+    background: var(--accent);
+  }
+  .timeline time {
+    font-size: 0.86rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .timeline strong {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    letter-spacing: -0.014em;
+  }
+  .timeline p {
+    color: var(--muted);
+    font-size: 0.96rem;
+  }
+
+  .tools {
+    display: grid;
+    gap: 1.6rem;
+  }
+  .tools h3 {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+  }
+
+  .teaser {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding: clamp(1.4rem, 3.5vw, 3rem);
+    border-radius: var(--radius);
+    background: #0f1012;
+    color: #f3efe6;
+    transition: transform 0.6s var(--ease);
+  }
+  .teaser:hover {
+    transform: translateY(-4px);
+  }
+  .teaser__logo {
+    width: clamp(3.2rem, 7vw, 5.5rem);
+    height: auto;
+  }
+  .teaser__text {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .teaser__text em {
+    font-size: 1.1rem;
+    color: #d9a94e;
+    font-weight: 600;
+  }
+  .teaser__text strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3.6vw, 3rem);
+    font-weight: 620;
+    letter-spacing: -0.022em;
+    line-height: 1.02;
+  }
+  .teaser__text > span {
+    color: #a8a195;
+  }
+  .teaser__go {
+    font-size: clamp(1.4rem, 3vw, 2.4rem);
+    color: #d9a94e;
+    transition: transform 0.5s var(--ease-spring);
+  }
+  .teaser:hover .teaser__go {
+    transform: translateX(8px);
+  }
+
+  @media (max-width: 900px) {
+    .stackwrap {
+      grid-template-columns: 1fr;
+    }
+    .layer:global(.is-active) {
+      transform: none;
+    }
+  }
+</style>

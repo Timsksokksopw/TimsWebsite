@@ -1,0 +1,299 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Momente from '../components/Momente.astro';
+import { foto } from '../data/fotos';
+
+const portrait = foto('tim-portrait');
+const weg = [
+  ['Von Anfang an', 'Zürcher Weinland', 'Hier bin ich aufgewachsen, und hier wohne ich noch immer.'],
+  ['Früh', 'Die erste Ibanez', 'Eine E-Gitarre, fast so gross wie ich, und ein Notenständer davor.'],
+  ['Januar 2023', 'Los Trios', 'Drei Freunde, drei Gitarren, eine Band.'],
+  ['August 2025', 'Zum ersten Mal im Studio', 'Aufnahmen mit Access Audio Productions.'],
+  ['Oktober 2025', 'Erste Songs auf Spotify', '«Overdose of Everything» von Los Trios erscheint.'],
+  ['Juni 2026', 'Waldhoffest, die Zweite', 'Zum zweiten Mal auf der Bühne in Andelfingen.'],
+];
+const antrieb = [
+  ['Neugier', 'Ich will verstehen, wie etwas funktioniert. Und dann ausprobieren, ob es auch anders geht.'],
+  ['Verantwortung', 'Ich übernehme gern eine aktive Rolle im Team, ob im Projekt, in der Firma oder in der Band.'],
+  ['Dranbleiben', 'Gitarre, Code oder Rückhand: Besser wird man nur, wenn man regelmässig übt.'],
+];
+---
+
+<Base
+  page="ueber-mich"
+  title="Über mich"
+  description="Wer ist Tim Biedermann? Aufgewachsen im Zürcher Weinland, Gitarrist bei Los Trios, Tischtennis, Ski und meistens eine Cap auf dem Kopf."
+>
+  <section class="page-hero">
+    <div class="container ahero">
+      <div class="stack" style="--gap:1.4rem">
+        <p class="eyebrow" data-reveal>Über mich</p>
+        <h1 class="t-page ahero__name" data-split>Tim Biedermann</h1>
+        <p class="t-lead t-muted ahero__lead" data-reveal style="--d:3">
+          Aufgewachsen im Zürcher Weinland, zwischen Winterthur und Schaffhausen. Ich mag Dinge, die man bauen, spielen oder hinunterfahren kann.
+        </p>
+        <div class="btn-row" data-reveal style="--d:4">
+          <a class="btn" href="/kontakt/">Sag hoi <span class="arrow">→</span></a>
+          <a class="btn btn--ghost" href="#momente">Momente</a>
+        </div>
+      </div>
+      <div class="ahero__pic" data-reveal="scale">
+        <div class="media ahero__img" data-tilt="7">
+          <Image src={portrait.src} alt="Portrait von Tim Biedermann" widths={[480, 800, 1200]} sizes="(max-width: 760px) 86vw, 36vw" loading="eager" />
+        </div>
+        <div class="ahero__cap" data-cursor="grab">
+          <div class="stage3d" data-viewer="cap"></div>
+          <span class="ahero__cap-label">Dreh mich</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container container--narrow stack" style="--gap:1.6rem">
+      <p class="t-lead" data-reveal>
+        Ich lebe seit meiner Geburt im Zürcher Weinland. Rebberge, Thur und Rhein liegen vor der Haustür, und nach Zürich ist es trotzdem nicht weit.
+        Das passt ziemlich gut zu mir: unter der Woche Technik, am Wochenende Natur und Lärm.
+      </p>
+      <p class="t-lead t-muted" data-reveal>
+        Morgens fahre ich mit dem Velo zum Bahnhof, abends hängt meistens eine Gitarre um. Dazwischen liegen Tischtennis beim TTC Neuhausen, im
+        Winter die Ski und im Sommer das Bike. Langweilig wird mir selten.
+      </p>
+      <p class="t-lead t-muted" data-reveal>
+        In der Band heisse ich Bobby. Meine Lieblingsband ist Guns N' Roses, denn wer Solos mag, kommt an Slash nicht vorbei. Die Cord-Cap ist
+        fast immer dabei, auf der Bühne, im Studio und am Rheinfall. Und falls die Frage kommt: Messi, nicht Ronaldo.
+      </p>
+    </div>
+  </section>
+
+  <Momente />
+
+  <section class="section">
+    <div class="container grid-2">
+      <div class="stack weg__head" style="--gap:1.2rem">
+        <p class="eyebrow" data-reveal>Der Weg bisher</p>
+        <h2 class="t-xl" data-split>Kurz und in der richtigen Reihenfolge.</h2>
+      </div>
+      <ol class="weg">
+        {
+          weg.map(([date, title, text], i) => (
+            <li data-reveal style={`--d:${i % 3}`}>
+              <time>{date}</time>
+              <strong>{title}</strong>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container grid-2">
+      <div class="stack" style="--gap:1.2rem">
+        <p class="eyebrow" data-reveal>Beruflich</p>
+        <h2 class="t-l" data-split>Die Arbeit hat ihre eigenen Seiten.</h2>
+      </div>
+      <ul class="jobs">
+        <li data-reveal>
+          <a href="/wendico/"><span>Wendico</span><strong>Meine Digitalagentur</strong><i aria-hidden="true">→</i></a>
+        </li>
+        <li data-reveal style="--d:1">
+          <a href="/arbeit/"><span>Swisscom</span><strong>Plattformentwicklung</strong><i aria-hidden="true">→</i></a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow" data-reveal>Was mich antreibt</p>
+      </div>
+      <div class="antrieb">
+        {
+          antrieb.map(([title, text], i) => (
+            <div class="card" data-tilt="6" data-reveal style={`--d:${i}`}>
+              <span class="antrieb__n">0{i + 1}</span>
+              <h3 class="t-l">{title}</h3>
+              <p class="t-muted">{text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initViewer } from '../scripts/three/viewer';
+
+  const v = document.querySelector<HTMLElement>('[data-viewer="cap"]');
+  if (v) {
+    try {
+      initViewer(v, 'cap', { scale: 1.75, tilt: 0.35 });
+    } catch {
+      v.parentElement!.hidden = true;
+    }
+  }
+</script>
+
+<style>
+  .ahero {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+  }
+  .ahero__lead {
+    max-width: 30em;
+  }
+  .ahero__pic {
+    position: relative;
+    justify-self: end;
+    width: min(100%, 26rem);
+  }
+  .ahero__img {
+    aspect-ratio: 3 / 4;
+    box-shadow: 0 50px 90px -50px rgba(13, 19, 34, 0.55);
+  }
+  .ahero__cap {
+    position: absolute;
+    width: 62%;
+    aspect-ratio: 1;
+    left: -38%;
+    bottom: -14%;
+    cursor: grab;
+    touch-action: none;
+    z-index: 2;
+  }
+  .ahero__cap :global(.is-dragging) {
+    cursor: grabbing;
+  }
+  .ahero__cap-label {
+    position: absolute;
+    left: 50%;
+    bottom: 4%;
+    translate: -50% 0;
+    font-size: 0.86rem;
+    color: var(--muted);
+    pointer-events: none;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  :global(.no-webgl) .ahero__cap {
+    display: none;
+  }
+
+  .weg__head {
+    position: sticky;
+    top: calc(var(--nav-h) + 2rem);
+  }
+  .weg {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: weg;
+  }
+  .weg li {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--line);
+    transition: padding 0.5s var(--ease);
+  }
+  .weg li:first-child {
+    border-top: 1px solid var(--line);
+  }
+  .weg li:hover {
+    padding-left: 1rem;
+  }
+  .weg time {
+    font-size: 0.86rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .weg strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+    letter-spacing: -0.017em;
+    line-height: 1.05;
+  }
+  .weg p {
+    color: var(--muted);
+  }
+
+  .ahero__name {
+    font-size: clamp(2.8rem, 7.2vw, 6.6rem);
+  }
+  .jobs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .jobs a {
+    display: grid;
+    grid-template-columns: 7rem 1fr auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.3rem 0;
+    border-bottom: 1px solid var(--line);
+    transition: padding 0.5s var(--ease), color 0.3s;
+  }
+  .jobs a:hover {
+    padding-left: 0.8rem;
+    color: var(--accent);
+  }
+  .jobs span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .jobs strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    letter-spacing: -0.017em;
+    line-height: 1.05;
+  }
+  .jobs i {
+    font-style: normal;
+    transition: transform 0.4s var(--ease);
+  }
+  .jobs a:hover i {
+    transform: translateX(6px);
+  }
+  .antrieb {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+  .antrieb .card {
+    display: grid;
+    gap: 0.9rem;
+    align-content: start;
+  }
+  .antrieb__n {
+    font-size: 0.86rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .ahero {
+      grid-template-columns: 1fr;
+    }
+    .ahero__pic {
+      justify-self: center;
+      width: min(78%, 22rem);
+    }
+    .ahero__cap {
+      left: -24%;
+      width: 56%;
+    }
+    .weg__head {
+      position: static;
+    }
+  }
+</style>
