@@ -8,10 +8,8 @@ const c = site.contact;
   <div class="container">
     <div class="footer__top">
       <div class="footer__cta">
-        <p class="eyebrow">Lust auf ein Hallo?</p>
-        <a href="/kontakt/" class="footer__big" data-cursor="link">
-          Schreib mir<span class="footer__arrow" aria-hidden="true">↗</span>
-        </a>
+        <p class="footer__ask">Lust auf ein Hallo?</p>
+        <a href="/kontakt/" class="footer__big" data-cursor="link">Schreib mir</a>
       </div>
       <div class="footer__cols">
         <div>
@@ -24,16 +22,16 @@ const c = site.contact;
         <div>
           <p class="footer__label">Projekte</p>
           <ul>
-            <li><a class="link" href={site.links.wendico} target="_blank" rel="noopener">wendico.ch ↗</a></li>
-            <li><a class="link" href={site.links.lostrios} target="_blank" rel="noopener">lostrios.ch ↗</a></li>
+            <li><a class="link" href={site.links.wendico} target="_blank" rel="noopener">wendico.ch<span class="sr-only"> (öffnet neues Fenster)</span></a></li>
+            <li><a class="link" href={site.links.lostrios} target="_blank" rel="noopener">lostrios.ch<span class="sr-only"> (öffnet neues Fenster)</span></a></li>
           </ul>
         </div>
         <div>
           <p class="footer__label">Kontakt</p>
           <ul>
-            <li><a class="link" href={c.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a></li>
+            <li><a class="link" href={c.linkedin} target="_blank" rel="noopener">LinkedIn<span class="sr-only"> (öffnet neues Fenster)</span></a></li>
             {c.instagram && (
-              <li><a class="link" href={`https://www.instagram.com/${c.instagram}/`} target="_blank" rel="noopener">Instagram ↗</a></li>
+              <li><a class="link" href={`https://www.instagram.com/${c.instagram}/`} target="_blank" rel="noopener">Instagram<span class="sr-only"> (öffnet neues Fenster)</span></a></li>
             )}
             <li><a class="link" href={c.phoneHref}>{c.phoneDisplay}</a></li>
           </ul>
@@ -42,8 +40,8 @@ const c = site.contact;
     </div>
     <div class="footer__bottom">
       <span>© {year} Tim Biedermann</span>
-      <span>Gestaltung und Umsetzung: <a class="link" href={site.links.wendico} target="_blank" rel="noopener">Wendico</a></span>
-      <a href="#top" class="link" data-to-top>Nach oben ↑</a>
+      <span>Gestaltung und Umsetzung: <a class="link" href={site.links.wendico} target="_blank" rel="noopener">Wendico<span class="sr-only"> (öffnet neues Fenster)</span></a></span>
+      <a href="#top" class="link" data-to-top>Nach oben</a>
     </div>
   </div>
 </footer>
@@ -62,29 +60,28 @@ const c = site.contact;
     grid-template-columns: 1.15fr 1fr;
     align-items: end;
   }
+  .footer__ask {
+    color: var(--muted);
+    font-weight: 600;
+  }
   .footer__big {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.15em;
-    margin-top: 1rem;
+    display: inline-block;
+    margin-top: 0.6rem;
     font-family: var(--font-display);
     font-weight: 650;
     font-size: clamp(2.8rem, 6.8vw, 6.4rem);
     letter-spacing: -0.03em;
     line-height: 1;
     white-space: nowrap;
-    transition: color 0.4s;
+    /* Unterstrich wächst beim Überfahren von links nach rechts */
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 0.06em no-repeat;
+    padding-bottom: 0.06em;
+    transition: color 0.4s, background-size 0.6s var(--ease);
   }
-  .footer__big:hover {
+  .footer__big:hover,
+  .footer__big:focus-visible {
     color: var(--accent);
-  }
-  .footer__arrow {
-    display: inline-block;
-    font-size: 0.6em;
-    transition: transform 0.6s var(--ease-spring);
-  }
-  .footer__big:hover .footer__arrow {
-    transform: translate(0.12em, -0.12em) rotate(8deg);
+    background-size: 100% 0.06em;
   }
   .footer__cols {
     display: grid;

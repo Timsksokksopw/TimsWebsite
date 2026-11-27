@@ -22,13 +22,13 @@ Der Ordner `dist/` kann auf jedes Hosting geladen werden (Hostpoint, Cloudflare 
 | Kontaktangaben, Links, Menü-Einträge | `src/data/site.ts` |
 | Vorschaubilder im Menü | `src/components/Nav.astro` → `sources` |
 | Logo (das goldene T) | `src/data/logo.ts` |
-| Texte und Kapitel der Startseite | `src/pages/index.astro` |
+| Texte der Startseite und ihrer vier Türen | `src/pages/index.astro` |
 | Leistungen auf der Wendico-Seite | `src/pages/wendico.astro` → `leistungen` |
 | Instagram-Handle (noch leer) | `src/data/site.ts` → `contact.instagram` |
 | Texte einer Seite | `src/pages/<seite>.astro` |
 | Bildunterschriften | `src/data/fotos.ts` |
 | Wendico-Projekte im Karussell | `src/data/projekte.ts` + Screenshot (3:2) in `src/assets/projekte/` |
-| Farben und Schrift | `src/styles/global.css` (ganz oben) |
+| Farben und Schriften, auch die der einzelnen Welten | `src/styles/global.css` (ganz oben) |
 | Fotos und Texte auf dem Foto-Tisch (Über mich) | `src/assets/fotos/persoenlich/` und `src/data/momente.ts` |
 
 ## Neue Fotos
@@ -63,10 +63,32 @@ höchstens aber 7 Sekunden (`MIN_MS`, `MAX_MS` in `src/components/Loader.astro`)
 Eigene Ladeaufgaben meldet man mit `loader.track(name, promise)` aus `src/scripts/loader.ts` an.
 Die lange Fassung nochmals ansehen: Browser-Tab schliessen und neu öffnen.
 
-## Schrift
+## Welten: ein Rahmen, mehrere Stile
 
-Eine Familie für alles: Schibsted Grotesk (über `@fontsource-variable/schibsted-grotesk`). Hervorhebungen in Überschriften
-stehen in `<em>` und erscheinen in der Akzentfarbe statt kursiv. Mono-Schrift gibt es nur noch für Tasten und Anzeige der Gitarre.
+Die Idee der Website: ein Mensch, mehrere Welten. Der Rahmen ist überall gleich (Leiste mit dem goldenen T,
+Vollbild-Menü, Fusszeile, Fliesstext in Schibsted Grotesk). Farben und Titelschrift wechseln je nach Welt.
+
+| Welt | Wo | Farben | Titelschrift |
+| --- | --- | --- | --- |
+| Grundton | alle Seiten ohne eigene Welt | Weiss, Tinte `#16181d`, Gold nur für das Logo und kleine Details | Schibsted Grotesk |
+| Swisscom | Tür auf der Startseite | Weiss, Navy `#001155`, Blau `#0445c8`; bewusst ohne Swisscom-Logo | Schibsted Grotesk 700 |
+| Wendico | Tür auf der Startseite | Waldgrün `#14231d`, Lime `#d8ff71` wie auf wendico.ch | Manrope, Text in DM Sans |
+| Los Trios | Tür auf der Startseite | nur Schwarz und Weiss, Fotos in Schwarz-Weiss | Libre Bodoni kursiv (wie im Bandlogo) |
+| Sport | Tür auf der Startseite und Seite `/sport/` | Weiss, Tinte `#111`, Orange `#fa5a1e` vom Ski-Helm | Archivo, schmal und fett |
+
+- **Welt einer Seite setzen:** `<Base world="sport">`. Das schreibt `data-world` auf `<html>`; die Farben dazu stehen in
+  `src/styles/global.css` im Block `:root[data-world='sport']`. Eine neue Welt braucht dort einen Block und einen Eintrag
+  im Typ von `world` in `src/layouts/Base.astro`.
+- **Schriften:** Jede Seite lädt nur, was sie braucht, über einen Import oben in der Seite
+  (z. B. `import '@fontsource-variable/archivo/wdth.css'`). Die Namen stehen als `--font-sport`, `--font-wendico`,
+  `--font-wendico-body` und `--font-lostrios` in `global.css`. Mono-Schrift gibt es nur für Tasten und Anzeige der Gitarre.
+- **Orange und Kontrast:** Weisse Schrift auf Orange ist nur für sehr grosse Wörter gedacht. Text und Knöpfe auf Orange
+  stehen in Tinte, orange Schrift in normaler Grösse nimmt `--orange-deep`.
+- **Leiste über dunklen Abschnitten:** Abschnitte mit `data-nav-tone="dark"` beschriften die Leiste automatisch hell.
+
+Bewusst weggelassen, weil es schnell nach Vorlage aussieht: kleine Labels über jeder Überschrift, Nummern 01/02/03 ohne
+echte Reihenfolge, Pfeile hinter Links, mit Mittelpunkten verkettete Angaben, einzelne farbige Wörter in Überschriften
+und Einblenden bei jedem Abschnitt. Auf Startseite und Sport ist das umgesetzt; die übrigen Seiten folgen.
 
 ## 3D-Szenen
 
@@ -75,47 +97,46 @@ Alle Szenen liegen in `src/scripts/three/` und sind komplett im Code gebaut (kei
 | Datei | Szene |
 | --- | --- |
 | `hero.ts` | Startseite, Einstieg: Gitarrenfoto mit Tiefeneffekt und Glas-Schriftzug «BIEDERMANN» |
-| `goldstaub/` | Startseite: Scroll-Story, in der Goldstaub von Form zu Form fliegt (Details unten) |
 | `logo.ts` | das Logo-T als 3D-Objekt, aus denselben Pfaden wie das flache Logo |
-| `stack-model.ts` | Plattform-Stack als Modell (Startseite und Arbeit-Seite) |
+| `stack-model.ts` | Plattform-Stack als Modell (Arbeit-Seite) |
 | `guitar-model.ts` | das Gitarrenmodell (Korpus, Hals, Tremolo, Regler, Kopfplatte) |
 | `music.ts` | Bühne und Bedienung: Saiten, Griffbrett, Tremolohebel, Regler, Looper, Einpassen ins Layout |
 | `audio.ts` | Sound: Saiten-Synthese, Effektpedale, Begleitband, Akkorde, Licks und Riffs |
-| `mountain.ts` | Berg mit Skilift, Skifahrern/Bikern und Winter/Sommer-Schalter |
-| `pingpong.ts` | Tischtennis-Minispiel |
+| `mountain.ts` | Berg mit Skilift, Skifahrern/Bikern und Winter/Sommer-Schalter; passt Grösse und Lage ans Fenster an |
+| `pingpong.ts` | Tischtennis-Minispiel im orangen Block der Sport-Seite |
 | `work.ts` | Plattform-Stack und Projekt-Karussell |
 | `viewer.ts`, `objects.ts`, `cap.ts` | einzelne Objekte (Cord-Cap, Plektrum, Golfball …) |
 
-### Startseite: vom Tag in den Abend
+### Startseite: Türen in die Welten
 
-Die Startseite hat vier Teile, alle in `src/pages/index.astro`:
+Alles steht in `src/pages/index.astro`:
 
-1. **Tag:** heller Einstieg mit dem Gitarrenfoto (`akustik-im-weinland`), dem Glas-Schriftzug und Name mit Kurztext direkt auf dem Bild.
-2. **Dämmerung:** Farbverlauf von hell zu dunkel, davor steigen Goldfunken auf (`src/scripts/dusk.ts`).
-3. **Abend:** die Goldstaub-Story (siehe unten).
-4. **Morgen:** kurzer Verlauf zurück ins Helle, dann «Gerade aktuell» und die Fusszeile.
+1. **Einstieg:** das Gitarrenfoto (`akustik-im-weinland`) mit dem Glas-Schriftzug, Name und Kurztext direkt auf dem Bild.
+2. **Auftakt:** «Wo du mich findest.» mit den vier Welten als Sprungmarken, jede in ihrer eigenen Schrift.
+3. **Vier Türen:** Swisscom, Wendico, Los Trios und Sport. Jede Tür ist ein fensterhoher Abschnitt im Stil ihrer Welt
+   und führt auf die passende Seite.
+4. **Gerade aktuell** (Liste `notizen`, neueste zuerst) und die Karte zum Erstgespräch.
 
-Ein anderes Einstiegsfoto: in `index.astro` bei `heroFoto` den Namen ändern und bei `initHero` den Bildausschnitt (`focus`) anpassen.
-Abschnitte mit dunklem Hintergrund tragen `data-nav-tone="dark"`; dort beschriftet sich die Leiste oben automatisch hell.
+Beim Scrollen bleibt jede Tür oben stehen und die nächste schiebt sich darüber (`position: sticky`, Klasse `is-stack`,
+gesetzt im Skript am Ende der Seite). Ist eine Tür höher als das Fenster, etwa am Handy, bleibt sie erst stehen, wenn ihr
+unteres Ende erreicht ist. Bei «Bewegung reduzieren» und ohne JavaScript stehen die Türen normal untereinander.
 
-### Goldstaub-Story
+- **Anderes Einstiegsfoto:** in `index.astro` bei `heroFoto` den Namen ändern und bei `initHero` den Bildausschnitt
+  (`focus`) anpassen. Das Foto wird nur einmal geladen: Das `<img>` dient zugleich als Textur für den Glas-Effekt.
+- **Neue Tür:** einen weiteren `<section class="door …">` in `.doors` einfügen und im Auftakt verlinken.
 
-Die Scrollposition steuert alles. Fünf Kapitel, dazwischen zerfällt das Objekt zu Goldstaub
-und setzt sich neu zusammen: Logo-T → Browserfenster (Wendico) → Plattform-Stack (Swisscom)
-→ Portrait → Plektrum (Freizeit).
+### Sport-Seite
 
-| Datei in `goldstaub/` | Aufgabe |
-| --- | --- |
-| `timeline.ts` | Länge der Kapitel und Übergänge (`HOLDS`, `MORPH`, in Bildschirmhöhen) |
-| `shapes.ts` | die fünf Objekte und ihre Gold-/Anthrazit-Materialien |
-| `sampling.ts` | macht aus Objekten und dem Portraitfoto Punktwolken |
-| `dust.ts` | die Partikel und ihr Flug von Form zu Form |
-| `dissolve.ts` | löst die massiven Objekte passend zum Staub auf |
-| `index.ts` | Bühne, Licht, Layout, Scroll, Texte, Kapitelanzeige |
+`src/pages/sport.astro`, in dieser Reihenfolge:
 
-Welche Projekt-Screenshots im Browserfenster laufen, steht in `src/pages/index.astro` (`shotProjects`).
-Das Portrait ist `src/assets/fotos/portrait/tim-studio.jpg`; ein neues Foto sollte einen ruhigen, einfarbigen Hintergrund haben.
-Ohne WebGL stehen die Kapitel einfach untereinander; bei «Bewegung reduzieren» wechseln die Objekte ohne Partikel.
+1. **Einstieg:** der drehbare Berg, dahinter gross das Wort der Jahreszeit («Winter» oder «Sommer»). Der Schalter links
+   unten wechselt Wort, Text und Szene. Die Szene meldet die Höhe des Gipfels als `--peak-y`, damit das Wort in jeder
+   Fenstergrösse hinter dem Gipfel steht, und rückt die Insel so, dass sie Titel und Schalter nie überdeckt.
+2. **Motivation** und das dunkle Band mit den Zahlen.
+3. **Sportarten als Blöcke:** Ski gross, danach die Liste `blocks` oben in der Datei. Ein Block ohne Foto
+   (`img: null`) wird dunkel. Reihenfolge und Texte ändert man dort.
+4. **Tischtennis:** der orange Block mit Liga, Link zum TTC Neuhausen und dem Spiel «Halt den Ball oben.».
+5. **Galerie:** alle Fotos aus `src/assets/fotos/sport/`.
 
 ### Logo ändern
 

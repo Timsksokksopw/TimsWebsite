@@ -10,16 +10,18 @@ import { site } from '../data/site';
 interface Props {
   title?: string;
   description?: string;
-  theme?: 'light' | 'stage' | 'night';
+  theme?: 'light' | 'stage';
+  /** Welt der Seite: bestimmt Farben und Titelschrift (Token-Blöcke in src/styles/global.css) */
+  world?: 'home' | 'sport';
   page: string;
 }
-const { title, description = site.description, theme = 'light', page } = Astro.props;
+const { title, description = site.description, theme = 'light', world, page } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.tagline}`;
-const themeColor = { light: '#f3f0e9', stage: '#06080c', night: '#0f1012' }[theme];
+const themeColor = { light: '#ffffff', stage: '#06080c' }[theme];
 ---
 
 <!doctype html>
-<html lang="de-CH" data-theme={theme} data-page={page}>
+<html lang="de-CH" data-theme={theme} data-world={world} data-page={page}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />

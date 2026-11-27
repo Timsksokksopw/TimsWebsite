@@ -39,9 +39,8 @@ const activeKey = nav.find((n) => n.href === path || n.children?.some((ch) => ch
   <div class="menu__inner">
     <nav class="menu__list" aria-label="Hauptnavigation">
       {
-        nav.map((item, i) => (
+        nav.map((item) => (
           <div class="menu__row" data-preview={item.key}>
-            <span class="menu__n" aria-hidden="true">0{i + 1}</span>
             {item.href ? (
               <a class="menu__link" href={item.href} aria-current={isCurrent(item.href)}>
                 {item.label}
@@ -69,10 +68,10 @@ const activeKey = nav.find((n) => n.href === path || n.children?.some((ch) => ch
 
     <div class="menu__foot">
       <a href="/" aria-current={isCurrent('/')}>Startseite</a>
-      <a href={c.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a>
-      {c.instagram && <a href={`https://www.instagram.com/${c.instagram}/`} target="_blank" rel="noopener">Instagram ↗</a>}
+      <a href={c.linkedin} target="_blank" rel="noopener">LinkedIn<span class="sr-only"> (öffnet neues Fenster)</span></a>
+      {c.instagram && <a href={`https://www.instagram.com/${c.instagram}/`} target="_blank" rel="noopener">Instagram<span class="sr-only"> (öffnet neues Fenster)</span></a>}
       <a href={c.phoneHref}>{c.phoneDisplay}</a>
-      <a href={site.links.wendico} target="_blank" rel="noopener">wendico.ch ↗</a>
+      <a href={site.links.wendico} target="_blank" rel="noopener">wendico.ch<span class="sr-only"> (öffnet neues Fenster)</span></a>
     </div>
   </div>
 </div>
@@ -113,7 +112,7 @@ const activeKey = nav.find((n) => n.href === path || n.children?.some((ch) => ch
   .bar:global(.is-hidden) {
     transform: translateY(-110%);
   }
-  /* über dunklen Abschnitten, z. B. im Abend-Teil der Startseite */
+  /* über dunklen Abschnitten (data-nav-tone="dark"), z. B. über dem Hero-Foto oder der Los-Trios-Tür */
   .bar:global(.bar--dark) {
     color: #f3efe6;
     --paper: #0f1012;
@@ -258,13 +257,6 @@ const activeKey = nav.find((n) => n.href === path || n.children?.some((ch) => ch
   .menu:global(.is-open) .menu__row:nth-child(3) { transition-delay: 0.22s; }
   .menu:global(.is-open) .menu__row:nth-child(4) { transition-delay: 0.27s; }
   .menu:global(.is-open) .menu__row:nth-child(5) { transition-delay: 0.32s; }
-  .menu__n {
-    font-style: normal;
-    font-size: clamp(0.95rem, 1.3vw, 1.2rem);
-    color: var(--m-gold);
-    width: 2.2ch;
-    font-weight: 600;
-  }
   .menu__link {
     font-family: var(--font-display);
     font-weight: 620;

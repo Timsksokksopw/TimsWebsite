@@ -498,18 +498,33 @@ export function initMountain(el: HTMLElement, startSeason: Season) {
 
   /* ---------- Kamera + Drehteller ---------- */
   const layout = () => {
-    const narrow = stage.width < 760;
+    // gleiche Schwelle wie im CSS der Sport-Seite: darunter steht der Titel oben und der Berg in der Mitte
+    const narrow = matchMedia('(max-width: 900px)').matches;
+    const clamp = THREE.MathUtils.clamp;
+    let x = 0;
+    let scale = 1;
     if (narrow) {
       stage.camera.position.set(0, 9, 27);
-      stage.camera.lookAt(0, 4.6, 0);
-      world.position.set(0, 0, 0);
-      world.scale.setScalar(0.66);
+      stage.camera.lookAt(0, 3.3, 0);
+      // die Insel darf am Handy links und rechts leicht über den Rand hinausragen
+      scale = clamp((1.2 * stage.viewAt(0).w) / (2 * R), 0.5, 0.95);
     } else {
       stage.camera.position.set(0, 8.4, 22);
       stage.camera.lookAt(0, 2.2, 0);
-      world.position.set(Math.min(3.4, stage.viewAt(0).w * 0.16), 0, 0);
-      world.scale.setScalar(1);
+      const w = stage.viewAt(0).w;
+      // Links unten stehen Titel und Schalter (rund 400 px breit). Die Insel nimmt höchstens den Rest,
+      // damit sie den Text nie überdeckt, und rückt dafür so weit nach rechts wie nötig.
+      const text = Math.min(0.42, 400 / stage.width);
+      scale = clamp((Math.min(0.6, 0.98 - text) * w) / (2 * R), 0.5, 0.92);
+      const disc = (scale * 2 * R) / w;
+      x = (Math.max(0.58, text + disc / 2) - 0.5) * w;
     }
+    world.position.set(x, 0, 0);
+    world.scale.setScalar(scale);
+    // Wo liegt der Gipfel im Bild? Das Wort der Jahreszeit hinter dem Berg richtet sich danach (CSS: --peak-y).
+    stage.camera.updateMatrixWorld();
+    const tip = new THREE.Vector3(x, summit.y * scale, 0).project(stage.camera);
+    el.parentElement?.style.setProperty('--peak-y', `${(((1 - tip.y) / 2) * 100).toFixed(2)}%`);
   };
   stage.onResize(layout);
 

@@ -26,6 +26,12 @@ export function initPingPong(el: HTMLElement, ui: HTMLElement) {
 
   /* ---------- Objekte ---------- */
   const paddle = makePaddle(false);
+  // Das Spiel läuft auf orangem Grund: der schwarze Belag zeigt nach oben (der rote ginge im Orange unter).
+  // Der Schläger steckt in einer Hülle: darin liegen [Blatt, roter Belag, schwarzer Belag, …].
+  // Die beiden Beläge tauschen die Seite.
+  const [, redRubber, blackRubber] = paddle.children[0].children;
+  redRubber.position.z = -0.05;
+  blackRubber.position.z = 0.05;
   const paddleRig = new THREE.Group();
   paddle.rotation.x = -Math.PI / 2 + 0.28;
   paddle.scale.setScalar(1.05);
@@ -33,7 +39,7 @@ export function initPingPong(el: HTMLElement, ui: HTMLElement) {
   stage.scene.add(paddleRig);
 
   const R = 0.2;
-  const ball = new THREE.Mesh(new THREE.SphereGeometry(R, 32, 24), clay(0xff9b3d, { roughness: 0.35 }));
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(R, 32, 24), clay(0xffffff, { roughness: 0.35 }));
   stage.scene.add(ball);
 
   const FLOOR = -2.7;

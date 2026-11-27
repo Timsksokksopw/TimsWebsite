@@ -80,21 +80,21 @@ const menu = document.querySelector<HTMLElement>('[data-menu]');
 const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
 const menuOpen = () => document.documentElement.classList.contains('menu-open');
 let lastY = window.scrollY;
-// Abschnitte mit dunklem Hintergrund (data-nav-tone="dark"): dort wird die Leiste hell beschriftet
-const darkZones = Array.from(document.querySelectorAll<HTMLElement>('[data-nav-tone="dark"]'));
+// Abschnitte mit dunklem Hintergrund (data-nav-tone="dark"): dort wird die Leiste hell beschriftet.
+// Massgebend ist der Abschnitt, der unter der Leiste wirklich zuoberst liegt. Auf der Startseite
+// schieben sich die Türen übereinander, deshalb reicht die Position allein nicht.
+const mainEl = document.querySelector<HTMLElement>('main');
+const hasDarkZones = !!document.querySelector('[data-nav-tone="dark"]');
 const onScroll = () => {
   const y = window.scrollY;
   if (navEl && !menuOpen()) {
     navEl.classList.toggle('is-hidden', y > lastY && y > 500);
     navEl.classList.toggle('is-scrolled', y > 40);
   }
-  if (navEl && darkZones.length) {
+  if (navEl && mainEl && hasDarkZones) {
     const probe = navEl.offsetHeight / 2;
-    const dark = darkZones.some((z) => {
-      const r = z.getBoundingClientRect();
-      return r.top <= probe && r.bottom > probe;
-    });
-    navEl.classList.toggle('bar--dark', dark);
+    const top = document.elementsFromPoint(innerWidth / 2, probe).find((el) => mainEl.contains(el));
+    navEl.classList.toggle('bar--dark', top?.closest<HTMLElement>('[data-nav-tone]')?.dataset.navTone === 'dark');
   }
   lastY = y;
 };

@@ -8,7 +8,7 @@ export const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matc
 export const isTouch = matchMedia('(pointer: coarse)').matches;
 
 export const COLORS = {
-  paper: 0xf3f0e9,
+  paper: 0xffffff,
   ink: 0x0d1322,
   blue: 0x1e46d8,
   blueDeep: 0x0f2a7a,

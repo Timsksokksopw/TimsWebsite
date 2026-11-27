@@ -1,21 +1,25 @@
 /* ==========================================================================
-   Tim Biedermann – Design-System
-   Farben: Papier-Weiss, Tinten-Navy, das Blau der Ibanez, das Orange vom Helm.
+   Tim Biedermann – Design-System «Ein Mensch, mehrere Welten»
+   Der Rahmen (Leiste, Menü, Fusszeile, Fliesstext) ist überall gleich.
+   Jede Seite trägt dazu die Farben und die Titelschrift ihrer Welt: data-world auf <html>.
    ========================================================================== */
 
 :root {
-  --paper: #f3f0e9;
-  --paper-2: #e9e5db;
-  --card: #fbf9f4;
-  --ink: #0d1322;
-  --muted: #5a6275;
-  --line: rgba(13, 19, 34, 0.12);
+  --paper: #ffffff;
+  --paper-2: #f2f3f4;
+  --card: #f7f8f9;
+  --ink: #16181d;
+  --muted: #5d636e;
+  --line: rgba(22, 24, 29, 0.12);
   --blue: #1e46d8;
   --blue-deep: #0f2a7a;
-  --orange: #ff6427;
+  /* Orange vom Ski-Helm. Weisse Grossschrift darauf hat Kontrast 3.2:1, Fliesstext darauf steht in Tinte. */
+  --orange: #fa5a1e;
+  /* für orange Schrift in normaler Grösse auf Weiss (Kontrast 5.2:1) */
+  --orange-deep: #c2410c;
   --maple: #e6b56e;
   --teal: #14b8b0;
-  /* Gold: --gold für Dekor, --accent (dunkler) für Text und Links auf Creme (Kontrast 5:1) */
+  /* Gold: --gold für Dekor, --accent (dunkler) für Text und Links auf Weiss (Kontrast 5.9:1) */
   --gold: #c9973f;
   --accent: #8a5d12;
   --on-accent: #ffffff;
@@ -23,10 +27,15 @@
   --logo-b: #a67722;
   --logo-c: #74500f;
 
-  /* Eine Schriftfamilie für alles: Schibsted Grotesk. Mono nur für Tasten und Anzeigen. */
+  /* Grundschrift für alles: Schibsted Grotesk. Mono nur für Tasten und Anzeigen der Gitarre. */
   --font-display: 'Schibsted Grotesk Variable', 'Segoe UI', system-ui, sans-serif;
   --font-body: 'Schibsted Grotesk Variable', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, Consolas, monospace;
+  /* Titelschriften der Welten. Jede Seite lädt nur die Schriften, die sie braucht (Import in der Seite). */
+  --font-sport: 'Archivo Variable', 'Arial Narrow', 'Segoe UI', system-ui, sans-serif;
+  --font-wendico: 'Manrope Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-wendico-body: 'DM Sans Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-lostrios: 'Libre Bodoni Variable', 'Bodoni MT', Didot, Georgia, serif;
 
   --gutter: clamp(1.1rem, 4vw, 3rem);
   --radius: clamp(18px, 2.2vw, 30px);
@@ -34,6 +43,15 @@
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --nav-h: 4.5rem;
+}
+
+/* ---------- Welt Sport: Weiss, Tinte und das Orange vom Helm ---------- */
+:root[data-world='sport'] {
+  --paper-2: #f1f2f3;
+  --card: #f1f2f3;
+  --ink: #111111;
+  --line: rgba(17, 17, 17, 0.12);
+  --accent: #c2410c;
 }
 
 :root[data-theme='stage'] {
@@ -47,23 +65,6 @@
   --accent: #2ce0d2;
   --on-accent: #04100f;
   --gold: #d9a94e;
-  --logo-a: #f8dc8e;
-  --logo-b: #d9a94e;
-  --logo-c: #a06f1e;
-  color-scheme: dark;
-}
-
-/* Startseite: Anthrazit und Gold */
-:root[data-theme='night'] {
-  --paper: #0f1012;
-  --paper-2: #17181b;
-  --card: #17181b;
-  --ink: #f3efe6;
-  --muted: #a8a195;
-  --line: rgba(255, 255, 255, 0.13);
-  --gold: #d9a94e;
-  --accent: #d9a94e;
-  --on-accent: #14110a;
   --logo-a: #f8dc8e;
   --logo-b: #d9a94e;
   --logo-c: #a06f1e;
@@ -337,8 +338,8 @@ h2 em {
   background: var(--ink);
 }
 .btn--light {
-  --btn-bg: #f6f3ec;
-  --btn-fg: #0d1322;
+  --btn-bg: #ffffff;
+  --btn-fg: #16181d;
 }
 .btn--accent:hover {
   color: var(--paper);

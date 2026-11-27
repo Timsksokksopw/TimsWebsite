@@ -73,13 +73,14 @@ const FRAG = /* glsl */ `
     float facing = 0.55 + 0.45 * dot(normalize(n + 1e-5), -ldir);
     col += rim * facing * 0.36;
 
-    gl_FragColor = vec4(mix(vec3(0.953, 0.941, 0.914), col, uReveal), 1.0);
+    gl_FragColor = vec4(mix(vec3(0.949, 0.953, 0.957), col, uReveal), 1.0);
     #include <colorspace_fragment>
   }
 `;
 
 export interface HeroOptions {
-  photo: string;
+  /** das Foto, das schon als <img> in der Seite steht. Es dient auch als Textur und wird kein zweites Mal geladen. */
+  photo: HTMLImageElement;
   word: string;
   /** Bildausschnitt (x, y von oben), 0…1 */
   focus?: [number, number];
@@ -123,6 +124,7 @@ export function initHero(el: HTMLElement, section: HTMLElement, opts: HeroOption
   const drawMask = () => {
     const w = Math.min(2048, Math.round(stage.width * Math.min(devicePixelRatio, 2)));
     const h = Math.round((w * stage.height) / stage.width);
+    const resized = maskCanvas.width !== w || maskCanvas.height !== h;
     maskCanvas.width = w;
     maskCanvas.height = h;
     const c = maskCanvas.getContext('2d')!;
@@ -152,6 +154,9 @@ export function initHero(el: HTMLElement, section: HTMLElement, opts: HeroOption
     c.fillStyle = '#ff0000';
     c.fillText(opts.word, x, y);
     c.globalCompositeOperation = 'source-over';
+    // Die Grösse einer Textur steht nach dem ersten Hochladen fest. Hat sich die Leinwand geändert
+    // (Fenstergrösse), wird die Textur verworfen und neu angelegt, sonst bliebe der alte Schriftzug stehen.
+    if (resized) maskTex.dispose();
     maskTex.needsUpdate = true;
   };
   const fontReady = (document as any).fonts?.load ? (document as any).fonts.load('700 100px "Schibsted Grotesk Variable"') : Promise.resolve();
@@ -171,15 +176,42 @@ export function initHero(el: HTMLElement, section: HTMLElement, opts: HeroOption
   loader.whenDone(() => (go = true));
   let photoDone = () => {};
   loader.track('foto', new Promise<void>((res) => (photoDone = res)));
-  new THREE.TextureLoader().load(opts.photo, (tex) => {
+  const img = opts.photo;
+  const setTexture = (source: ImageBitmap | HTMLImageElement, flipY: boolean) => {
+    const tex = new THREE.Texture(source);
+    tex.flipY = flipY;
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
+    tex.needsUpdate = true;
     uniforms.uTex.value = tex;
-    uniforms.uImg.value.set(tex.image.width, tex.image.height);
+    uniforms.uImg.value.set(img.naturalWidth, img.naturalHeight);
     loaded = true;
     section.classList.add('is-gl');
     photoDone();
-  }, undefined, () => photoDone());
+  };
+  const useImage = () => {
+    // Bild fehlt oder ist kaputt: es bleibt beim normalen <img> ohne Glas-Effekt
+    if (!img.naturalWidth) return photoDone();
+    // Das <img> selbst taugt nicht als Textur: Es meldet seine Grösse im Layout, nicht die des Bildes,
+    // und die Textur bliebe schwarz. Deshalb wird aus seinen Pixeln ein Bitmap in Originalgrösse erzeugt.
+    if (typeof createImageBitmap === 'function') {
+      createImageBitmap(img, { imageOrientation: 'flipY' }).then(
+        (bmp) => setTexture(bmp, false),
+        () => photoDone(),
+      );
+    } else {
+      // älterer Browser: dieselbe Datei als eigenes Bild (kommt aus dem Cache)
+      const copy = new Image();
+      copy.onload = () => setTexture(copy, true);
+      copy.onerror = () => photoDone();
+      copy.src = img.currentSrc || img.src;
+    }
+  };
+  if (img.complete) useImage();
+  else {
+    img.addEventListener('load', useImage, { once: true });
+    img.addEventListener('error', () => photoDone(), { once: true });
+  }
 
   let scroll = 0;
   window.addEventListener('scroll', () => (scroll = Math.min(1.2, window.scrollY / Math.max(1, section.offsetHeight))), { passive: true });

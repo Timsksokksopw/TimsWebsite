@@ -1,202 +1,190 @@
 ---
-// Startseite «Vom Tag in den Abend»: heller Einstieg mit dem Gitarrenfoto, dann wird es Abend
-// und die Goldstaub-Story beginnt (Wendico, Swisscom, Über mich, Freizeit). Zum Schluss wieder hell.
-import { Image, getImage } from 'astro:assets';
+// Startseite «Türen in die Welten»: das Gitarrenfoto als Einstieg, danach je eine Tür pro Welt
+// (Swisscom, Wendico, Los Trios, Sport). Jede Tür trägt schon Farben und Schrift ihrer Unterseite.
+// Beim Scrollen schiebt sich die nächste Tür über die vorherige.
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/manrope/wght.css';
+import '@fontsource-variable/dm-sans/wght.css';
+import '@fontsource-variable/libre-bodoni/wght-italic.css';
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import Logo from '../components/Logo.astro';
 import { foto } from '../data/fotos';
 import { site } from '../data/site';
-import { projekte } from '../data/projekte';
-import { TOTAL } from '../scripts/three/goldstaub/timeline';
+import wendicoLogo from '../assets/logos/wendico.png';
+import lostriosLogo from '../assets/logos/lostrios.svg?url';
 
-const pick = (name: string) => projekte.find((p) => p.name === name)!;
-const shotProjects = ['TTC Neuhausen', 'Mini Tank', 'SC Beauty Luxe', 'Elegant Society'].map(pick);
-const shots = await Promise.all(shotProjects.map(async (p) => (await getImage({ src: p.img, width: 1024, format: 'webp' })).src));
-const studio = foto('tim-studio');
-const portrait = (await getImage({ src: studio.src, width: 900, format: 'webp' })).src;
-const band = foto('waldhof-live');
 const heroFoto = foto('akustik-im-weinland');
-const heroSrc = (await getImage({ src: heroFoto.src, width: heroFoto.src.width, format: 'webp', quality: 86 })).src;
+const portrait = foto('tim-portrait');
+const alp = foto('wandern-tal');
+const band = foto('waldhof-live');
+const gipfel = foto('snowboard-duo');
 
-const chapters = ['Start', 'Wendico', 'Swisscom', 'Über mich', 'Freizeit'];
+// [Datum für Maschinen, Datum sichtbar, Satz, Ziel], neueste zuerst
 const notizen = [
-  ['Nov 2026', 'Wendico', 'Die Website für Mini Tank ist live.', '/wendico/'],
-  ['Aug 2026', 'Swisscom', 'Start ins vierte und letzte Lehrjahr.', '/arbeit/'],
-  ['Okt 2026', 'Los Trios', 'Zwei Tage im Studio, drei neue Songs aufgenommen.', '/musik/'],
+  ['2026-11', 'Nov 2026', 'Die Website für Mini Tank ist live.', '/wendico/'],
+  ['2026-10', 'Okt 2026', 'Zwei Tage im Studio, drei neue Songs aufgenommen.', '/musik/'],
+  ['2026-08', 'Aug 2026', 'Start ins vierte und letzte Lehrjahr.', '/arbeit/'],
 ];
+const neuesFenster = ' (öffnet neues Fenster)';
 ---
 
-<Base page="home">
-  <section class="hero" data-hero>
-    <Image class="hero__img" src={heroFoto.src} alt="Akustikgitarre auf einer Holzbank, dahinter Hügel im Abendlicht" widths={[800, 1200, 1600]} sizes="100vw" loading="eager" fetchpriority="high" />
-    <div class="stage3d hero__gl" data-hero-gl data-photo={heroSrc}></div>
+<Base page="home" world="home">
+  <section class="hero" data-hero data-nav-tone="dark">
+    <Image class="hero__img" src={heroFoto.src} alt="Akustikgitarre auf einer Holzbank, dahinter Hügel im Abendlicht" widths={[800, 1200, heroFoto.src.width]} sizes="100vw" quality={84} loading="eager" fetchpriority="high" />
+    <div class="stage3d hero__gl" data-hero-gl></div>
     <p class="hero__word" aria-hidden="true">Biedermann</p>
 
     <div class="hero__text">
       <h1 class="hero__name">Tim Biedermann</h1>
       <p class="hero__lead">Gründer der Digitalagentur Wendico, Plattformentwickler bei Swisscom und Lead-Gitarrist bei Los Trios.</p>
       <div class="btn-row">
-        <a class="btn hero__btn" href={site.links.wendicoTermin} target="_blank" rel="noopener">Projekt anfragen <span class="arrow">↗</span></a>
+        <a class="btn hero__btn" href={site.links.wendicoTermin} target="_blank" rel="noopener">Projekt anfragen<span class="sr-only">{neuesFenster}</span></a>
         <a class="btn hero__btn hero__btn--glass" href="/ueber-mich/">Mehr über mich</a>
       </div>
     </div>
     <p class="hero__caption" aria-hidden="true">Gitarre, Bänkli, Abendlicht.</p>
   </section>
 
-  <!-- Es wird Abend: von hell zu dunkel, Goldfunken steigen auf -->
-  <section class="dusk" data-dusk>
-    <span class="dusk__dark" data-nav-tone="dark"></span>
-    <canvas class="dusk__sparks" data-dusk-canvas aria-hidden="true"></canvas>
-    <p class="dusk__line">Das ist, woran ich <em>arbeite</em>.</p>
-  </section>
-
-  <section class="gd" data-gd data-nav-tone="dark" data-shots={JSON.stringify(shots)} data-portrait={portrait} style={`--gd-u:${TOTAL}`}>
-    <div class="gd__fade" aria-hidden="true"></div>
-    <div class="gd__sticky">
-      <div class="stage3d gd__stage" data-gd-stage></div>
-
-      <div class="gd__grid">
-        <div class="gd__copies">
-          <article class="gd__copy is-on" data-ch="0">
-            <div class="gd__poster"><Logo size={180} /></div>
-            <p class="gd__kicker">Kurz gesagt</p>
-            <h1 class="gd__title gd__title--hero">Ich baue Websites, Software und <em>Plattformen</em>.</h1>
-            <p class="gd__text">Mitgründer der Digitalagentur Wendico und angehender Plattformentwickler bei Swisscom.</p>
-            <div class="btn-row">
-              <a class="btn btn--accent" href="/wendico/">Wendico ansehen <span class="arrow">→</span></a>
-              <a class="btn btn--ghost" href="/arbeit/">Swisscom</a>
-            </div>
-          </article>
-
-          <article class="gd__copy" data-ch="1">
-            <div class="gd__poster"><Image src={shotProjects[0].img} alt={`Website ${shotProjects[0].name}`} widths={[480, 900]} sizes="90vw" /></div>
-            <p class="gd__kicker">01 · Wendico</p>
-            <h2 class="gd__title">Meine Agentur für <em>digitale</em> Produkte.</h2>
-            <p class="gd__text">
-              Mit Wendico setze ich zusammen mit Panat Ruangsri Websites, Software und SaaS-Lösungen um. Bisher sind {projekte.length} Projekte live.
-            </p>
-            <ul class="gd__list">
-              <li>Websites</li>
-              <li>Web-Apps, Portale & SaaS</li>
-              <li>KI-Lösungen</li>
-              <li>Umsatzsysteme</li>
-            </ul>
-            <a class="gd__more" href="/wendico/">Zur Wendico-Seite <span aria-hidden="true">→</span></a>
-          </article>
-
-          <article class="gd__copy" data-ch="2">
-            <p class="gd__kicker">02 · Swisscom</p>
-            <h2 class="gd__title">Plattformen, die <em>einfach</em> laufen.</h2>
-            <p class="gd__text">
-              Bei Swisscom lerne ich Informatiker EFZ mit Fachrichtung Plattformentwicklung. Ich bin im 4. Lehrjahr und mache daneben die Berufsmatura.
-            </p>
-            <ul class="gd__list">
-              <li>Netzwerk</li>
-              <li>Cloud</li>
-              <li>Plattform</li>
-              <li>Web & Apps</li>
-            </ul>
-            <a class="gd__more" href="/arbeit/">Mehr zur Arbeit <span aria-hidden="true">→</span></a>
-          </article>
-
-          <article class="gd__copy" data-ch="3">
-            <div class="gd__poster"><Image src={studio.src} alt="Portrait von Tim Biedermann" widths={[480, 900]} sizes="90vw" /></div>
-            <p class="gd__kicker">03 · Über mich</p>
-            <h2 class="gd__title">Der Mensch <em>dahinter</em>.</h2>
-            <p class="gd__text">Neugierig, konzentriert bei der Sache und gern mit Verantwortung im Team. Ich mag Dinge, die man bauen und fertig machen kann.</p>
-            <a class="gd__more" href="/ueber-mich/">Mehr über mich <span aria-hidden="true">→</span></a>
-          </article>
-
-          <article class="gd__copy" data-ch="4">
-            <div class="gd__poster"><Image src={band.src} alt={band.alt} widths={[480, 900]} sizes="90vw" /></div>
-            <p class="gd__kicker">04 · Freizeit</p>
-            <h2 class="gd__title">Nach <em>Feierabend</em>.</h2>
-            <p class="gd__text">Lead-Gitarre bei Los Trios, Ski im Winter, Tischtennis das ganze Jahr.</p>
-            <p class="gd__links">
-              <a class="gd__more" href="/musik/">Musik <span aria-hidden="true">→</span></a>
-              <a class="gd__more" href="/sport/">Sport <span aria-hidden="true">→</span></a>
-            </p>
-          </article>
-        </div>
-        <div class="gd__slot" data-gd-slot></div>
-      </div>
-
-      <nav class="gd__index" aria-label="Kapitel">
-        {
-          chapters.map((c, i) => (
-            <button data-gd-go={i} aria-current={i === 0 ? 'step' : undefined} aria-label={`Kapitel ${i + 1}: ${c}`}>
-              <i>{c}</i>
-              <span></span>
-            </button>
-          ))
-        }
+  <section class="intro">
+    <div class="container intro__row">
+      <h2 class="intro__title">Wo du mich findest.</h2>
+      <!-- Jede Welt in ihrer eigenen Schrift: ein Vorgeschmack auf die Türen darunter -->
+      <nav class="intro__worlds" aria-label="Meine vier Welten">
+        <a href="#swisscom" class="world world--swisscom">Swisscom</a>
+        <a href="#wendico" class="world world--wendico">Wendico</a>
+        <a href="#los-trios" class="world world--lostrios">Los Trios</a>
+        <a href="#sport" class="world world--sport">Sport</a>
       </nav>
-      <p class="gd__hint" data-gd-hint aria-hidden="true">Scrollen<span></span></p>
     </div>
   </section>
 
-  <div class="dawn" aria-hidden="true"><span data-nav-tone="dark"></span></div>
+  <div class="doors" data-doors>
+    <!-- Tür 1: Swisscom. Ruhig, Weiss und Navy, klares Raster. Bewusst ohne Swisscom-Logo. -->
+    <section class="door door--swisscom" id="swisscom" aria-labelledby="tuer-swisscom">
+      <div class="container sc">
+        <div class="sc__copy">
+          <p class="sc__world">Swisscom</p>
+          <h2 class="sc__title" id="tuer-swisscom">Plattformen, die einfach laufen.</h2>
+          <p class="sc__text">Lehre als Informatiker EFZ, Fachrichtung Plattformentwicklung, im vierten und letzten Lehrjahr. Daneben die Berufsmatura an der TBZ.</p>
+          <ul class="sc__facts">
+            <li><strong>4.</strong><span>Lehrjahr</span></li>
+            <li><strong>5</strong><span>Stationen</span></li>
+            <li><strong>BM</strong><span>Berufsmatura</span></li>
+          </ul>
+          <a class="btn sc__btn" href="/arbeit/">Zu meiner Lehre</a>
+        </div>
+        <figure class="sc__photo" data-tilt="3">
+          <Image src={portrait.src} alt="Tim Biedermann lacht in die Kamera, im dunkelblauen Pullover" widths={[480, 800, 1100]} sizes="(max-width: 900px) 92vw, 40vw" />
+        </figure>
+      </div>
+    </section>
 
-  <section class="section section--tight after">
+    <!-- Tür 2: Wendico. Waldgrün, Lime, Manrope und DM Sans wie auf wendico.ch. -->
+    <section class="door door--wendico" id="wendico" aria-labelledby="tuer-wendico">
+      <div class="wd">
+        <Image class="wd__bg" src={alp.src} alt="" widths={[800, 1200, 1600]} sizes="100vw" />
+        <div class="wd__content">
+          <span class="wd__logo"><Image src={wendicoLogo} alt="Wendico" width={96} /></span>
+          <h2 class="wd__title" id="tuer-wendico">
+            <span>Websites, Software und KI.</span>
+            <span>Für Firmen, die wachsen wollen.</span>
+          </h2>
+          <p class="wd__text">Wendico habe ich mit Panat Ruangsri gegründet. Wir bauen Websites, Software, KI-Lösungen und Umsatzsysteme für Unternehmen in der Schweiz.</p>
+          <div class="btn-row">
+            <a class="btn wd__btn" href="/wendico/">Zur Wendico-Seite</a>
+            <a class="btn wd__btn wd__btn--ghost" href={site.links.wendicoTermin} target="_blank" rel="noopener">30-Minuten-Erstgespräch buchen<span class="sr-only">{neuesFenster}</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tür 3: Los Trios. Nur Schwarz und Weiss, Plektrum-Logo, Bodoni wie im Bandlogo. -->
+    <section class="door door--lostrios" id="los-trios" aria-labelledby="tuer-lostrios" data-nav-tone="dark">
+      <div class="lt__photo">
+        <Image src={band.src} alt={band.alt} widths={[700, 1100, 1600]} sizes="(max-width: 900px) 100vw, 60vw" />
+      </div>
+      <div class="lt__copy">
+        <img class="lt__logo" src={lostriosLogo} alt="Los Trios" width="208" height="208" loading="lazy" decoding="async" />
+        <h2 class="lt__title" id="tuer-lostrios">Ich spiele die Solos.</h2>
+        <p class="lt__text">Lead-Gitarre bei Los Trios, Spitzname Bobby. Auf der Musikseite steht eine Gitarre, die du selber spielen kannst.</p>
+        <a class="btn lt__btn" href="/musik/">Gitarre spielen</a>
+      </div>
+    </section>
+
+    <!-- Tür 4: Sport. Weiss, schmale fette Schrift und das Orange vom Ski-Helm. -->
+    <section class="door door--sport" id="sport" aria-labelledby="tuer-sport">
+      <div class="container sp">
+        <div class="sp__copy">
+          <h2 class="sp__word" id="tuer-sport">Raus<br />hier.</h2>
+          <ul class="sp__facts">
+            <li><strong>6</strong><span>Sportarten</span></li>
+            <li><strong>5. Liga</strong><span>Tischtennis beim TTC Neuhausen</span></li>
+          </ul>
+          <p class="sp__text">Ski, Tischtennis, Golf, Mountainbike, Laufen und Wandern. Hauptsache draussen.</p>
+          <a class="btn sp__btn" href="/sport/">Zur Sport-Seite</a>
+        </div>
+        <figure class="sp__photo" data-tilt="3">
+          <Image src={gipfel.src} alt="Tim mit orangem Ski-Helm und ein Freund jubeln auf einem verschneiten Gipfel" widths={[480, 800, 1100]} sizes="(max-width: 900px) 92vw, 38vw" />
+        </figure>
+      </div>
+    </section>
+  </div>
+
+  <section class="after">
     <div class="container after__grid">
       <div>
-        <h2 class="after__title serif" data-reveal>Gerade aktuell</h2>
+        <h2 class="after__title">Gerade aktuell</h2>
         <ul class="notes">
           {
-            notizen.map(([date, tag, text, href], i) => (
-              <li data-reveal style={`--d:${i}`}>
+            notizen.map(([iso, date, text, href]) => (
+              <li>
                 <a href={href}>
-                  <span class="notes__meta">
-                    {date} · {tag}
-                  </span>
-                  <span class="notes__text">{text}</span>
+                  <time datetime={iso}>{date}</time>
+                  <span>{text}</span>
                 </a>
               </li>
             ))
           }
         </ul>
       </div>
-      <a class="cta" href={site.links.wendicoTermin} target="_blank" rel="noopener" data-reveal="scale">
+      <a class="cta" href={site.links.wendicoTermin} target="_blank" rel="noopener">
         <span class="cta__label">Projekt im Kopf?</span>
         <strong>Lass uns 30 Minuten darüber reden.</strong>
-        <span class="cta__go">Erstgespräch auf wendico.ch buchen <i aria-hidden="true">↗</i></span>
+        <span class="btn cta__go">Erstgespräch auf wendico.ch buchen<span class="sr-only">{neuesFenster}</span></span>
       </a>
     </div>
   </section>
 </Base>
 
 <script>
-  import { initGoldstaub } from '../scripts/three/goldstaub';
   import { initHero } from '../scripts/three/hero';
-  import { initDusk } from '../scripts/dusk';
 
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   const heroGl = document.querySelector<HTMLElement>('[data-hero-gl]');
-  if (hero && heroGl) {
+  const heroImg = hero?.querySelector<HTMLImageElement>('.hero__img');
+  if (hero && heroGl && heroImg) {
     try {
-      initHero(heroGl, hero, { photo: heroGl.dataset.photo!, word: 'BIEDERMANN', focus: [0.5, 0.43], focusNarrow: [0.4, 0.5] });
+      // das <img> des Fotos ist zugleich die Textur für den Glas-Effekt
+      initHero(heroGl, hero, { photo: heroImg, word: 'BIEDERMANN', focus: [0.5, 0.43], focusNarrow: [0.4, 0.5] });
     } catch (err) {
       console.warn('3D nicht verfügbar', err);
     }
   }
-  const dusk = document.querySelector<HTMLElement>('[data-dusk]');
-  const duskCanvas = document.querySelector<HTMLCanvasElement>('[data-dusk-canvas]');
-  if (dusk && duskCanvas) initDusk(dusk, duskCanvas);
 
-  const section = document.querySelector<HTMLElement>('[data-gd]');
-  if (section) {
-    try {
-      initGoldstaub(section, { shots: JSON.parse(section.dataset.shots ?? '[]'), portrait: section.dataset.portrait ?? '' });
-    } catch (err) {
-      // kein WebGL: die Kapitel stehen einfach untereinander
-      console.warn('3D nicht verfügbar', err);
-      section.classList.add('gd--static');
-    }
+  // Türen stapeln: Jede Tür bleibt oben stehen, die nächste schiebt sich darüber.
+  // Ist eine Tür höher als das Fenster (Handy), bleibt sie erst stehen, wenn ihr unteres Ende erreicht ist.
+  const doors = document.querySelector<HTMLElement>('[data-doors]');
+  if (doors && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const items = Array.from(doors.querySelectorAll<HTMLElement>('.door'));
+    const measure = () => items.forEach((d) => d.style.setProperty('--door-h', `${d.offsetHeight}px`));
+    measure();
+    new ResizeObserver(measure).observe(doors);
+    doors.classList.add('is-stack');
   }
 </script>
 
 <style>
-  /* ---------- Tag: das Gitarrenfoto im Rahmen ---------- */
+  /* ---------- Einstieg: das Gitarrenfoto im Rahmen ---------- */
   .hero {
     --frame: clamp(0.4rem, 0.9vw, 0.8rem);
     position: relative;
@@ -247,13 +235,20 @@ const notizen = [
   .hero:global(.is-gl) .hero__word {
     display: none;
   }
-  /* Damit der Text ohne Kasten lesbar bleibt: weicher Schatten nur am unteren Bildrand */
+  /* Damit Text und Leiste ohne Kasten lesbar bleiben: weiche Schatten nur an den Bildrändern */
+  .hero::before,
   .hero::after {
     content: '';
     position: absolute;
-    inset: 48% 0 0 0;
     z-index: -1;
     pointer-events: none;
+  }
+  .hero::before {
+    inset: 0 0 82% 0;
+    background: linear-gradient(to bottom, rgba(10, 12, 16, 0.34), transparent);
+  }
+  .hero::after {
+    inset: 48% 0 0 0;
     background: linear-gradient(to top, rgba(10, 12, 16, 0.66) 0%, rgba(10, 12, 16, 0.3) 45%, transparent 100%);
   }
   .hero__text {
@@ -265,10 +260,10 @@ const notizen = [
     text-shadow: 0 1px 18px rgba(0, 0, 0, 0.4);
   }
   .hero__name {
-    font-size: clamp(2.4rem, 5.2vw, 4.8rem);
+    font-size: clamp(2.6rem, 6.2vw, 6rem);
     font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1;
+    letter-spacing: -0.028em;
+    line-height: 0.98;
   }
   .hero__lead {
     max-width: 32em;
@@ -277,15 +272,15 @@ const notizen = [
     color: rgba(255, 255, 255, 0.94);
   }
   .hero__btn {
-    --btn-bg: #f0b244;
-    --btn-fg: #14110a;
+    --btn-bg: #fff;
+    --btn-fg: #16181d;
     text-shadow: none;
   }
   .hero__btn::before {
-    background: #fff;
+    background: #16181d;
   }
   .hero__btn:hover {
-    color: #14110a;
+    color: #fff;
   }
   .hero__btn--glass {
     --btn-bg: rgba(255, 255, 255, 0.14);
@@ -294,11 +289,16 @@ const notizen = [
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
+  .hero__btn--glass::before {
+    background: #fff;
+  }
+  .hero__btn--glass:hover {
+    color: #16181d;
+  }
   .hero__caption {
     position: absolute;
     right: clamp(1rem, 2.4vw, 2rem);
     bottom: clamp(1rem, 2.4vw, 2rem);
-    font-style: normal;
     font-size: 1rem;
     color: #fff;
     text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
@@ -307,321 +307,423 @@ const notizen = [
     font-weight: 600;
   }
 
-  /* ---------- Dämmerung ---------- */
-  .dusk {
+  /* ---------- Auftakt zu den Türen ---------- */
+  .intro {
+    padding-block: clamp(3.5rem, 8vw, 7rem) clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .intro__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.2rem 3rem;
+  }
+  .intro__title {
+    font-size: clamp(2rem, 4.4vw, 3.6rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .intro__worlds {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem clamp(1.2rem, 2.6vw, 2.4rem);
+    font-size: clamp(1.3rem, 2vw, 1.75rem);
+  }
+  .world {
+    line-height: 1.25;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
+    transition: background-size 0.5s var(--ease);
+  }
+  .world:hover,
+  .world:focus-visible {
+    background-size: 100% 2px;
+  }
+  .world--swisscom {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #001155;
+  }
+  .world--wendico {
+    font-family: var(--font-wendico);
+    font-weight: 500;
+    color: #176b4b;
+  }
+  .world--lostrios {
+    font-family: var(--font-lostrios);
+    font-style: italic;
+    font-weight: 700;
+    color: #000;
+  }
+  .world--sport {
+    font-family: var(--font-sport);
+    font-stretch: 62%;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.12em;
+    color: var(--orange-deep);
+  }
+
+  /* ---------- Türen: gemeinsames Gerüst ---------- */
+  .door {
     position: relative;
-    height: 95svh;
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+  }
+  .doors:global(.is-stack) .door {
+    position: sticky;
+    top: min(0px, calc(100svh - var(--door-h, 100svh)));
+  }
+  /* die nachrückende Tür: oben abgerundet, mit weichem Schatten auf die Tür darunter */
+  .door + .door {
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow: 0 -22px 60px -28px rgba(0, 0, 0, 0.35);
+  }
+
+  /* ---------- Tür 1: Swisscom ---------- */
+  .door--swisscom {
+    --sc-navy: #001155;
+    --sc-blue: #0445c8;
+    --sc-line: #d9dee7;
+    background: #fff;
+    color: #1f1e23;
+    padding-block: clamp(4.5rem, 10svh, 7rem);
+  }
+  .sc {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+  }
+  .sc__world {
+    font-weight: 700;
+    color: var(--sc-navy);
+  }
+  .sc__title {
+    margin-top: 0.7rem;
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    line-height: 1.06;
+    color: var(--sc-navy);
+  }
+  .sc__text {
+    margin-top: 1.4rem;
+    max-width: 33em;
+    font-size: 1.125rem;
+    line-height: 1.55;
+  }
+  .sc__facts {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    max-width: 33rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--sc-line);
+    border-radius: 20px;
+  }
+  .sc__facts li {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.1rem 1.2rem;
+  }
+  .sc__facts li + li {
+    border-left: 1px solid var(--sc-line);
+  }
+  .sc__facts strong {
+    font-size: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--sc-navy);
+  }
+  .sc__facts span {
+    font-size: 0.94rem;
+    color: #555;
+  }
+  .sc__btn {
+    --btn-bg: var(--sc-blue);
+    --btn-fg: #fff;
+    margin-top: 2rem;
+  }
+  .sc__btn::before {
+    background: var(--sc-navy);
+  }
+  .sc__btn:hover {
+    color: #fff;
+  }
+  .sc__photo {
+    position: relative;
+    justify-self: end;
+    width: 100%;
+    max-height: 76svh;
+    aspect-ratio: 4 / 5;
+    border-radius: 20px;
     overflow: hidden;
-    background: linear-gradient(180deg, var(--paper) 0%, #f7e0c0 20%, #efab80 40%, #ad5d66 58%, #3b2738 77%, #0f1012 100%);
+    background: #f3f5f8;
+  }
+  .sc__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 24%;
+  }
+
+  /* ---------- Tür 2: Wendico ---------- */
+  .door--wendico {
+    --wd-pad: clamp(0.6rem, 1.8vw, 1.8rem);
+    background: #f4f7f4;
+    padding: var(--wd-pad);
+    font-family: var(--font-wendico-body);
+  }
+  .wd {
+    position: relative;
+    isolation: isolate;
+    min-height: calc(100svh - 2 * var(--wd-pad));
     display: grid;
     align-items: end;
-    justify-items: center;
+    border-radius: clamp(22px, 3vw, 40px);
+    overflow: hidden;
+    color: #fff;
+    background: #14231d;
+    box-shadow: rgba(26, 47, 38, 0.2) 0 30px 65px;
   }
-  .dusk__dark {
+  .wd__bg {
     position: absolute;
-    inset: 52% 0 0 0;
-    pointer-events: none;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.6s var(--ease);
   }
-  .dusk__sparks {
+  .door--wendico:hover .wd__bg {
+    transform: scale(1.03);
+  }
+  /* Waldgrüner Schleier: links dicht für den Text, rechts bleibt das Tal sichtbar */
+  .wd::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(100deg, rgba(13, 34, 26, 0.94) 0%, rgba(14, 58, 42, 0.8) 46%, rgba(14, 58, 42, 0.3) 100%);
+  }
+  .wd__content {
+    display: grid;
+    justify-items: start;
+    gap: clamp(1.1rem, 2vw, 1.6rem);
+    padding: clamp(1.5rem, 5vw, 5rem);
+  }
+  .wd__logo {
+    display: inline-flex;
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    background: #fff;
+  }
+  .wd__logo :global(img) {
+    height: 1.7rem;
+    width: auto;
+  }
+  .wd__title {
+    font-family: var(--font-wendico);
+    font-weight: 500;
+    font-size: clamp(2.1rem, 4.4vw, 4rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    /* zwei Zeilen wie auf wendico.ch: erst die Aussage, dann die Pointe */
+    max-width: 68rem;
+    text-wrap: initial;
+  }
+  .wd__title span {
+    display: block;
+  }
+  .wd__title span + span {
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .wd__text {
+    max-width: 35em;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.86);
+  }
+  .wd__btn {
+    --btn-bg: #d8ff71;
+    --btn-fg: #14231d;
+  }
+  .wd__btn::before {
+    background: #fff;
+  }
+  .wd__btn:hover {
+    color: #14231d;
+  }
+  .wd__btn--ghost {
+    --btn-bg: rgba(255, 255, 255, 0.1);
+    --btn-fg: #fff;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* ---------- Tür 3: Los Trios ---------- */
+  .door--lostrios {
+    background: #000;
+    color: #fff;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    align-items: stretch;
+    overflow: hidden;
+  }
+  .lt__photo {
+    position: relative;
+    min-height: 56svh;
+    overflow: hidden;
+  }
+  .lt__photo :global(img) {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
+    object-fit: cover;
+    object-position: 50% 40%;
+    /* die Band gibt es hier nur in Schwarz-Weiss, wie ihr Logo */
+    filter: grayscale(1) contrast(1.25);
+    transition: transform 1.6s var(--ease);
   }
-  .dusk__line {
-    position: relative;
-    margin-bottom: 15svh;
-    padding-inline: var(--gutter);
-    max-width: 16em;
-    text-align: center;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: clamp(1.8rem, 4.6vw, 4rem);
-    letter-spacing: -0.022em;
+  .door--lostrios:hover .lt__photo :global(img) {
+    transform: scale(1.04);
+  }
+  .lt__copy {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: clamp(1.1rem, 2vw, 1.6rem);
+    padding: clamp(2rem, 5vw, 5rem);
+  }
+  .lt__logo {
+    width: clamp(8.5rem, 13vw, 13rem);
+    height: auto;
+    margin-left: -0.6rem;
+  }
+  .lt__title {
+    font-family: var(--font-lostrios);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 4.6vw, 4.2rem);
     line-height: 1.02;
-    color: #f3efe6;
+    letter-spacing: -0.01em;
   }
-  .dusk__line :global(em),
-  .dusk__line em {
-    font-weight: 500;
-    color: #e9b458;
+  .lt__text {
+    max-width: 27em;
+    color: #a6a6a6;
   }
-  /* ---------- Morgen: zurück ins Helle ---------- */
-  .dawn {
-    position: relative;
-    height: 55svh;
-    background: linear-gradient(180deg, #0f1012 0%, #3b2738 26%, #c98a6e 58%, #f5dfc4 80%, var(--paper) 100%);
+  .lt__btn {
+    --btn-bg: transparent;
+    --btn-fg: #fff;
+    box-shadow: inset 0 0 0 1.5px #fff;
   }
-  .dawn span {
-    position: absolute;
-    inset: 0 0 62% 0;
+  .lt__btn::before {
+    background: #fff;
+  }
+  .lt__btn:hover {
+    color: #000;
   }
 
-  /* ---------- Abend: die Goldstaub-Story mit eigenen, dunklen Farben ---------- */
-  .gd {
-    --paper: #0f1012;
-    --paper-2: #17181b;
-    --card: #17181b;
-    --ink: #f3efe6;
-    --muted: #a8a195;
-    --line: rgba(255, 255, 255, 0.13);
-    --gold: #d9a94e;
-    --accent: #d9a94e;
-    --on-accent: #14110a;
-    color-scheme: dark;
-    color: var(--ink);
-    background: var(--paper);
-    position: relative;
-    height: calc((var(--gd-u) + 1) * 100svh);
+  /* ---------- Tür 4: Sport ---------- */
+  .door--sport {
+    background: #fff;
+    color: #111;
+    padding-block: clamp(4.5rem, 10svh, 7rem);
   }
-  .gd__fade {
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 26svh;
-    z-index: 3;
-    pointer-events: none;
-    background: linear-gradient(180deg, #0f1012 0%, rgba(15, 16, 18, 0.6) 40%, transparent 100%);
-  }
-  .gd:global(.gd--static) .gd__fade {
-    display: none;
-  }
-  .gd__sticky {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    overflow: hidden;
-  }
-  .gd__grid {
-    position: relative;
-    z-index: 1;
-    height: 100%;
-    width: min(1400px, 100% - 2 * var(--gutter));
-    margin-inline: auto;
+  .sp {
     display: grid;
-    grid-template-columns: minmax(20rem, 0.92fr) 1.08fr;
-    gap: clamp(1rem, 4vw, 4rem);
-    align-items: center;
-    padding-block: calc(var(--nav-h) + 0.5rem) 2.6rem;
-    padding-right: clamp(0rem, 3vw, 3rem);
-    pointer-events: none;
-  }
-  .gd__copies {
-    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
     align-items: center;
   }
-  .gd__copy {
-    grid-area: 1 / 1;
-    display: grid;
-    gap: clamp(0.9rem, 1.8vw, 1.4rem);
-    justify-items: start;
-    opacity: 0;
-    will-change: opacity, transform;
+  .sp__word {
+    margin-left: -0.03em;
+    font-family: var(--font-sport);
+    font-stretch: 62%;
+    font-weight: 900;
+    font-size: clamp(5.5rem, min(18vw, 30svh), 18rem);
+    line-height: 0.82;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+    color: var(--orange);
   }
-  .gd__copy:first-child {
-    opacity: 1;
-  }
-  .gd__copy:global(.is-on) {
-    pointer-events: auto;
-  }
-  .gd__slot {
-    height: 100%;
-    min-height: 0;
-  }
-  .gd__poster {
-    display: none;
-  }
-  .gd__kicker {
-    font-style: normal;
-    font-size: clamp(1.05rem, 1.4vw, 1.3rem);
-    color: var(--gold);
-    font-weight: 600;
-  }
-  .gd__title {
-    font-size: clamp(2.2rem, min(4.7vw, 8.5vh), 4.8rem);
-    font-weight: 620;
-    letter-spacing: -0.025em;
-    line-height: 1.06;
-    max-width: 12em;
-  }
-  .gd__title--hero {
-    font-size: clamp(2.5rem, min(5.5vw, 9.5vh), 5.6rem);
-  }
-  .gd__title :global(em) {
-    font-weight: 500;
-    letter-spacing: -0.017em;
-    color: var(--gold);
-  }
-  .gd__text {
-    max-width: 30em;
-    font-size: clamp(1.02rem, 0.96rem + 0.4vw, 1.3rem);
-    line-height: 1.5;
-    color: var(--muted);
-  }
-  .gd__list {
+  .sp__facts {
     list-style: none;
-    margin: 0;
+    margin: clamp(1.4rem, 3vw, 2.4rem) 0 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem 1.5rem;
-    font-weight: 600;
+    gap: 1rem clamp(1.6rem, 4vw, 3.4rem);
   }
-  .gd__list li::before {
-    content: '';
-    display: inline-block;
-    width: 0.46em;
-    height: 0.46em;
-    margin-right: 0.55em;
-    background: var(--gold);
-    rotate: 45deg;
-    translate: 0 -0.1em;
-  }
-  .gd__more {
-    font-weight: 600;
-    padding-bottom: 0.25em;
-    border-bottom: 1.5px solid var(--gold);
-    transition: color 0.3s;
-  }
-  .gd__more span {
-    display: inline-block;
-    transition: transform 0.4s var(--ease);
-  }
-  .gd__more:hover {
-    color: var(--gold);
-  }
-  .gd__more:hover span {
-    transform: translateX(5px);
-  }
-  .gd__links {
-    display: flex;
-    gap: 1.6rem;
-  }
-
-  .gd__index {
-    position: absolute;
-    z-index: 2;
-    right: clamp(0.6rem, 1.6vw, 1.6rem);
-    top: 50%;
-    translate: 0 -50%;
-    display: grid;
-    gap: 0.2rem;
-    justify-items: end;
-  }
-  .gd__index button {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 0.45rem 0.2rem;
-    color: var(--muted);
-    font-size: 0.82rem;
-    font-weight: 600;
-  }
-  .gd__index i {
-    font-style: normal;
-    opacity: 0;
-    translate: 6px 0;
-    transition: opacity 0.3s, translate 0.4s var(--ease);
-  }
-  .gd__index span {
-    width: 1.1rem;
-    height: 2px;
-    border-radius: 2px;
-    background: currentColor;
-    opacity: 0.5;
-    transition: width 0.5s var(--ease), background-color 0.3s, opacity 0.3s;
-  }
-  .gd__index button:hover i,
-  .gd__index button:focus-visible i,
-  .gd__index button[aria-current] i {
-    opacity: 1;
-    translate: 0 0;
-  }
-  .gd__index button[aria-current] {
-    color: var(--ink);
-  }
-  .gd__index button[aria-current] span {
-    width: 2.2rem;
-    background: var(--gold);
-    opacity: 1;
-  }
-  .gd__hint {
-    position: absolute;
-    z-index: 2;
-    left: 50%;
-    bottom: 1.1rem;
-    translate: -50% 0;
-    display: grid;
-    justify-items: center;
-    gap: 0.45rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: var(--muted);
-    pointer-events: none;
-  }
-  .gd__hint span {
-    width: 1.5px;
-    height: 1.6rem;
-    background: linear-gradient(var(--gold), transparent);
-    animation: drip 1.8s var(--ease) infinite;
-    transform-origin: top;
-  }
-  @keyframes drip {
-    0% {
-      transform: scaleY(0);
-    }
-    60%,
-    100% {
-      transform: scaleY(1);
-      opacity: 0;
-    }
-  }
-
-  /* ---------- ohne WebGL: Kapitel untereinander, mit Bildern ---------- */
-  .gd:global(.gd--static) {
-    height: auto;
-  }
-  .gd:global(.gd--static) .gd__sticky {
-    position: static;
-    height: auto;
-    overflow: visible;
-  }
-  .gd:global(.gd--static) .gd__stage,
-  .gd:global(.gd--static) .gd__slot,
-  .gd:global(.gd--static) .gd__index,
-  .gd:global(.gd--static) .gd__hint {
-    display: none;
-  }
-  .gd:global(.gd--static) .gd__grid,
-  .gd:global(.gd--static) .gd__copies {
+  .sp__facts strong {
     display: block;
-    pointer-events: auto;
+    font-family: var(--font-sport);
+    font-stretch: 62%;
+    font-weight: 900;
+    font-size: clamp(2.6rem, 4.4vw, 4rem);
+    line-height: 0.95;
+    text-transform: uppercase;
   }
-  .gd:global(.gd--static) .gd__copy {
-    opacity: 1 !important;
-    transform: none !important;
-    padding-block: clamp(2.5rem, 7vw, 5rem);
-    border-bottom: 1px solid var(--line);
+  .sp__facts span {
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: #5d636e;
   }
-  .gd:global(.gd--static) .gd__poster {
-    display: block;
-    width: min(100%, 26rem);
-    border-radius: 12px;
+  .sp__text {
+    margin-top: 1.3rem;
+    max-width: 29em;
+    font-size: 1.125rem;
+  }
+  /* Tinte auf Orange: Kontrast 5.9:1 (weisse Schrift wäre in dieser Grösse zu schwach) */
+  .sp__btn {
+    --btn-bg: var(--orange);
+    --btn-fg: #111;
+    margin-top: 1.6rem;
+  }
+  .sp__btn::before {
+    background: #111;
+  }
+  .sp__btn:hover {
+    color: #fff;
+  }
+  .sp__photo {
+    position: relative;
+    justify-self: end;
+    width: 100%;
+    max-height: 78svh;
+    aspect-ratio: 3 / 4;
+    border-radius: 28px;
     overflow: hidden;
+    background: #f1f2f3;
+  }
+  .sp__photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 40%;
   }
 
-  /* ---------- nach der Story ---------- */
+  /* ---------- nach den Türen ---------- */
+  .after {
+    position: relative;
+    background: var(--paper);
+    padding-block: clamp(4rem, 9vw, 8rem);
+  }
   .after__grid {
     display: grid;
-    grid-template-columns: 0.85fr 1.15fr;
+    grid-template-columns: 1.15fr 0.85fr;
     gap: clamp(2rem, 6vw, 6rem);
     align-items: center;
   }
   .after__title {
     font-size: clamp(1.8rem, 3vw, 2.6rem);
-    font-weight: 500;
-    margin-bottom: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
   }
   .notes {
     list-style: none;
@@ -636,110 +738,116 @@ const notizen = [
   }
   .notes a {
     display: grid;
-    gap: 0.25rem;
-    padding: 1.1rem 0;
+    grid-template-columns: 6.5rem 1fr;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.15rem 0;
     transition: padding 0.5s var(--ease);
   }
-  .notes a:hover {
+  .notes a:hover,
+  .notes a:focus-visible {
     padding-left: 0.8rem;
   }
-  .notes__meta {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--gold);
+  .notes time {
+    font-size: 0.94rem;
+    font-weight: 500;
+    color: var(--muted);
   }
-  .notes__text {
+  .notes span {
     font-size: 1.08rem;
     line-height: 1.4;
   }
   .cta {
     display: grid;
-    gap: 0.6rem;
-    padding: clamp(1.8rem, 4.5vw, 4rem);
-    border-radius: var(--radius);
-    background: var(--card);
-    border: 1px solid var(--line);
-    transition: transform 0.6s var(--ease), border-color 0.4s;
+    justify-items: start;
+    gap: 0.7rem;
+    padding: clamp(1.8rem, 4vw, 3.4rem);
+    border-radius: 28px;
+    background: var(--ink);
+    color: #fff;
+    transition: transform 0.6s var(--ease);
   }
   .cta:hover {
     transform: translateY(-4px);
-    border-color: var(--gold);
   }
   .cta__label {
-    font-style: normal;
-    font-size: 1.25rem;
-    color: var(--gold);
-    font-weight: 600;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.72);
   }
   .cta strong {
     font-family: var(--font-display);
-    font-size: clamp(1.9rem, 4.4vw, 3.8rem);
-    font-weight: 620;
+    font-size: clamp(1.8rem, 3.3vw, 3rem);
+    font-weight: 600;
     letter-spacing: -0.025em;
-    line-height: 1;
+    line-height: 1.06;
   }
   .cta__go {
-    margin-top: 0.8rem;
-    font-weight: 600;
-    color: var(--gold);
+    --btn-bg: #fff;
+    --btn-fg: #16181d;
+    margin-top: 1rem;
   }
-  .cta__go i {
-    font-style: normal;
-    display: inline-block;
-    transition: transform 0.5s var(--ease-spring);
+  /* die ganze Karte ist der Link: der Knopf füllt sich, sobald man die Karte berührt */
+  .cta__go::before {
+    background: #e2b04a;
   }
-  .cta:hover .cta__go i {
-    transform: translate(0.2em, -0.2em);
+  .cta:hover .cta__go,
+  .cta:focus-visible .cta__go {
+    color: #16181d;
+  }
+  .cta:hover .cta__go::before,
+  .cta:focus-visible .cta__go::before {
+    transform: translateY(0);
   }
 
   @media (max-width: 900px) {
-    /* Handy: Objekt oben, Text unten */
-    .gd__grid {
-      grid-template-columns: 1fr;
-      grid-template-rows: minmax(0, 1fr) auto;
-      gap: 0.6rem;
-      padding-block: calc(var(--nav-h) + 0.2rem) 2.4rem;
-      padding-right: 0;
-    }
-    .gd__slot {
-      order: 1;
-    }
-    .gd__copies {
-      order: 2;
-      align-items: end;
-    }
-    .gd__copy {
-      gap: 0.75rem;
-    }
-    .gd__title {
-      font-size: clamp(1.9rem, 8.4vw, 3rem);
-    }
-    .gd__title--hero {
-      font-size: clamp(2rem, 9vw, 3.2rem);
-    }
-    .gd__text {
-      font-size: 1rem;
-    }
-    .gd__index i {
-      display: none;
-    }
-    .gd__index {
-      top: 34%;
-    }
-    .gd__hint {
-      display: none;
-    }
     .hero__word {
       top: 15%;
     }
     .hero__caption {
       display: none;
     }
-    .dusk {
-      height: 80svh;
+    .sc,
+    .sp {
+      grid-template-columns: 1fr;
+    }
+    .sc__photo {
+      aspect-ratio: 4 / 3;
+      max-height: none;
+    }
+    .sp__photo {
+      aspect-ratio: 4 / 3;
+      max-height: none;
+    }
+    .sp__word {
+      font-size: clamp(5.5rem, 33vw, 13rem);
+    }
+    .door--lostrios {
+      grid-template-columns: 1fr;
+      grid-template-rows: minmax(44svh, 1fr) auto;
+    }
+    .lt__photo {
+      min-height: 44svh;
+    }
+    .wd__content {
+      padding-block: clamp(5rem, 16vw, 7rem) clamp(1.5rem, 5vw, 3rem);
+    }
+    .wd::after {
+      background: linear-gradient(180deg, rgba(14, 58, 42, 0.55) 0%, rgba(13, 34, 26, 0.92) 55%);
     }
     .after__grid {
       grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 520px) {
+    .sc__facts li {
+      padding: 0.9rem 0.8rem;
+    }
+    .sc__facts strong {
+      font-size: 1.5rem;
+    }
+    .notes a {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
     }
   }
 </style>

@@ -11,7 +11,7 @@ const big = await Promise.all(items.map((f) => getImage({ src: f.src, width: Mat
 <div class="gallery">
   {
     items.map((f, i) => (
-      <button class="gallery__item" data-lightbox-src={big[i].src} data-lightbox-alt={f.alt} data-reveal style={`--d:${i % 3}`} aria-label={`${f.alt} – gross anzeigen`}>
+      <button class="gallery__item" data-lightbox-src={big[i].src} data-lightbox-alt={f.alt} aria-label={`${f.alt} – gross anzeigen`}>
         <Image src={f.src} alt={f.alt} widths={[400, 700, 1000]} sizes="(max-width: 600px) 92vw, (max-width: 1000px) 46vw, 31vw" loading="lazy" />
         <span>{f.alt}</span>
       </button>

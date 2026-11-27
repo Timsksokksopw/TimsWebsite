@@ -1,4 +1,8 @@
 ---
+// Sport-Seite: Weiss, schmale fette Schrift und das Orange vom Ski-Helm.
+// Einstieg mit dem drehbaren Berg vor dem Wort der Jahreszeit, dann die Sportarten als grosse Blöcke.
+// Tischtennis bekommt den orangen Block mit dem Spiel.
+import '@fontsource-variable/archivo/wdth.css';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Gallery from '../components/Gallery.astro';
@@ -6,31 +10,24 @@ import { fotos, foto } from '../data/fotos';
 import { site } from '../data/site';
 
 const gallery = [...fotos('sport'), foto('hund-auf-der-alp')];
+const ski = foto('snowboard-nebelmeer');
 
-const sports = [
+// Die vier kleineren Blöcke. Ohne Foto (img: null) wird der Block dunkel.
+const blocks = [
   {
-    n: '01', title: 'Ski', season: 'Winter', img: foto('snowboard-nebelmeer'), pos: '50% 60%',
-    text: 'Im Winter stehe ich auf den Ski, am liebsten bei Sonne über dem Nebelmeer. Das Snowboard habe ich auch schon ausprobiert. Beweisfotos gibt es unten in der Galerie.',
-  },
-  {
-    n: '02', title: 'Tischtennis', season: 'Ganzes Jahr', img: null, tone: 'blue',
-    text: 'Seit ein paar Jahren an der Platte. Ich spiele mit dem TTC Neuhausen in der 5. Liga und habe nebenbei auch die Website des Clubs gebaut.',
-    link: { href: site.links.ttc, label: 'ttc-neuhausen.ch' },
-  },
-  {
-    n: '03', title: 'Golf', season: 'Sommer', img: foto('golf-range'), pos: '40% 45%',
+    title: 'Golf', season: 'Sommer', img: foto('golf-range'), pos: '50% 28%',
     text: 'Auf der Driving Range Bälle schlagen, bis der Korb leer ist. Und dann noch einen Korb.',
   },
   {
-    n: '04', title: 'Mountainbike', season: 'Sommer', img: null, tone: 'orange',
-    text: 'Mit dem Bike durchs Weinland, über Feldwege und durch den Wald. Unter der Woche reicht es immerhin für die Strecke zum Bahnhof.',
-  },
-  {
-    n: '05', title: 'Laufen', season: 'Ganzes Jahr', img: foto('laufen'), pos: '60% 80%',
+    title: 'Laufen', season: 'Ganzes Jahr', img: foto('laufen'), pos: '60% 78%',
     text: 'Laufschuhe an und los, am liebsten über Kieswege und durch den Wald. Kopf lüften nach einem Tag am Bildschirm.',
   },
   {
-    n: '06', title: 'Wandern', season: 'Sommer', img: foto('wandern-tal'), pos: '50% 50%',
+    title: 'Mountainbike', season: 'Sommer', img: null, pos: '',
+    text: 'Mit dem Bike durchs Weinland, über Feldwege und durch den Wald. Unter der Woche reicht es immerhin für die Strecke zum Bahnhof.',
+  },
+  {
+    title: 'Wandern', season: 'Sommer', img: foto('wandern-tal'), pos: '50% 50%',
     text: 'Im Sommer geht es in die Berge. Weite Täler, Wasserfälle und zwischendurch vierbeinige Begleitung.',
   },
 ];
@@ -38,88 +35,101 @@ const sports = [
 
 <Base
   page="sport"
+  world="sport"
   title="Sport"
   description="Ski, Tischtennis, Golf, Mountainbike, Laufen und Wandern: So hält sich Tim Biedermann in Bewegung."
 >
   <section class="shero" data-season="winter" data-sport-hero>
-    <div class="shero__sky shero__sky--winter"></div>
-    <div class="shero__sky shero__sky--sommer"></div>
+    <!-- das Wort der Jahreszeit steht hinter dem Berg und wechselt mit dem Schalter -->
+    <p class="shero__word" aria-hidden="true">
+      <span data-word="winter">Winter</span>
+      <span data-word="sommer">Sommer</span>
+    </p>
     <div class="stage3d shero__stage" data-mountain data-cursor="grab"></div>
-    <div class="shero__inner container">
-      <p class="eyebrow" data-reveal>Sport · Hauptsache draussen</p>
-      <h1 class="t-page" data-split>Raus hier.</h1>
-      <p class="t-lead shero__lead" data-reveal style="--d:3">
+    <div class="shero__text">
+      <h1 class="shero__title">Raus hier.</h1>
+      <p class="shero__lead">
         <span data-lead="winter">Im Winter auf den Ski, sobald irgendwo Schnee liegt.</span>
         <span data-lead="sommer">Im Sommer zu Fuss, auf dem Bike oder auf der Driving Range.</span>
       </p>
-      <div class="season" role="group" aria-label="Jahreszeit wählen" data-reveal style="--d:4">
-        <button data-season-btn="winter" aria-pressed="true">❄ Winter</button>
-        <button data-season-btn="sommer" aria-pressed="false">☀ Sommer</button>
+      <div class="season" role="group" aria-label="Jahreszeit wählen">
+        <button data-season-btn="winter" aria-pressed="true">Winter</button>
+        <button data-season-btn="sommer" aria-pressed="false">Sommer</button>
         <span class="season__thumb" aria-hidden="true"></span>
       </div>
     </div>
-    <p class="shero__hint" aria-hidden="true">← Berg drehen → <span>· der mit dem orangen Helm bin ich</span></p>
+    <p class="shero__hint" aria-hidden="true">Berg drehen. Der mit dem orangen Helm bin ich.</p>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <div class="section-head">
-        <p class="eyebrow" data-reveal>Sechs Sportarten</p>
-        <h2 class="t-xl" data-split>Ich sitze beruflich genug. Der Rest ist Bewegung.</h2>
-      </div>
-      <div class="sports">
-        {
-          sports.map((s, i) => (
-            <article class={`sport ${s.img ? '' : `sport--plain sport--${s.tone}`}`} data-tilt="6" data-reveal style={`--d:${i % 3}`}>
-              {s.img && (
-                <div class="sport__img">
-                  <Image src={s.img.src} alt={s.img.alt} widths={[480, 800, 1100]} sizes="(max-width: 760px) 92vw, 31vw" style={`object-position:${s.pos}`} />
-                </div>
-              )}
-              <div class="sport__body">
-                <div class="sport__meta">
-                  <span>{s.n}</span>
-                  <span class="chip">{s.season}</span>
-                </div>
-                <h3 class="t-l">{s.title}</h3>
-                <p>{s.text}</p>
-                {s.link && (
-                  <a class="link" href={s.link.href} target="_blank" rel="noopener">
-                    {s.link.label} ↗
-                  </a>
-                )}
-              </div>
-            </article>
-          ))
-        }
-      </div>
+  <section class="why">
+    <div class="container why__grid">
+      <h2 class="why__title">Ich sitze beruflich genug. Der Rest ist Bewegung.</h2>
+      <p class="why__text">Sechs Sportarten, verteilt über das ganze Jahr. Hauptsache draussen, und nach einem Tag am Bildschirm den Kopf lüften.</p>
     </div>
   </section>
 
-  <section class="section section--tight">
-    <div class="container">
-      <div class="game" data-pp>
-        <div class="game__score" aria-hidden="true"><span data-pp-score>0</span></div>
-        <div class="stage3d" data-pp-stage></div>
-        <div class="game__head">
-          <p class="eyebrow">Kurze Pause</p>
-          <h2 class="t-l">Halt den Ball oben.</h2>
+  <section class="facts" data-nav-tone="dark" aria-label="In Zahlen">
+    <ul class="container facts__row">
+      <li><strong>6</strong><span>Sportarten</span></li>
+      <li><strong>5. Liga</strong><span>Tischtennis beim TTC Neuhausen</span></li>
+    </ul>
+  </section>
+
+  <section class="blocks">
+    <div class="container blocks__grid">
+      <h2 class="sr-only">Meine Sportarten</h2>
+
+      <article class="block block--wide">
+        <Image class="block__img" src={ski.src} alt="" widths={[800, 1280, 1600]} sizes="(max-width: 1340px) 94vw, 1280px" style="object-position:50% 58%" />
+        <div class="block__body">
+          <h3 class="block__title">Ski</h3>
+          <p class="block__text">Im Winter stehe ich auf den Ski, am liebsten bei Sonne über dem Nebelmeer. Das Snowboard habe ich auch schon ausprobiert. Beweisfotos gibt es unten in der Galerie.</p>
+          <p class="block__season">Winter</p>
         </div>
-        <p class="game__best">Rekord <b data-pp-best>0</b></p>
-        <div class="game__overlay" data-pp-overlay>
-          <p data-pp-msg>Beweg den Schläger mit der Maus oder dem Finger.</p>
-          <button class="btn btn--accent" data-pp-start>Los geht's</button>
+      </article>
+
+      {
+        blocks.map((b) => (
+          <article class:list={['block', !b.img && 'block--plain']} data-tilt="3">
+            {b.img && <Image class="block__img" src={b.img.src} alt="" widths={[480, 800, 1100]} sizes="(max-width: 760px) 94vw, 46vw" style={`object-position:${b.pos}`} />}
+            <div class="block__body">
+              <h3 class="block__title">{b.title}</h3>
+              <p class="block__text">{b.text}</p>
+              <p class="block__season">{b.season}</p>
+            </div>
+          </article>
+        ))
+      }
+
+      <!-- Tischtennis: der einzige Sport mit Liga, deshalb mit eigenem Block und einem Spiel -->
+      <article class="tt">
+        <div class="tt__info">
+          <h3 class="tt__title">Tischtennis</h3>
+          <div class="tt__copy">
+            <p>Seit ein paar Jahren an der Platte. Ich spiele mit dem TTC Neuhausen in der 5. Liga und habe nebenbei auch die Website des Clubs gebaut.</p>
+            <p class="tt__meta">
+              <a class="link" href={site.links.ttc} target="_blank" rel="noopener">ttc-neuhausen.ch<span class="sr-only"> (öffnet neues Fenster)</span></a>
+              <span>Ganzes Jahr</span>
+            </p>
+          </div>
         </div>
-      </div>
+        <div class="game" data-pp>
+          <div class="game__score" aria-hidden="true"><span data-pp-score>0</span></div>
+          <div class="stage3d" data-pp-stage></div>
+          <h4 class="game__title">Halt den Ball oben.</h4>
+          <p class="game__best">Rekord <b data-pp-best>0</b></p>
+          <div class="game__overlay" data-pp-overlay>
+            <p data-pp-msg>Beweg den Schläger mit der Maus oder dem Finger.</p>
+            <button class="btn game__btn" data-pp-start>Los geht's</button>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 
-  <section class="section section--tight">
+  <section class="gal">
     <div class="container">
-      <div class="section-head">
-        <p class="eyebrow" data-reveal>Galerie</p>
-        <h2 class="t-l" data-split>Schnee, Gras und Kies</h2>
-      </div>
+      <h2 class="gal__title">Schnee, Gras und Kies</h2>
       <Gallery items={gallery} />
     </div>
   </section>
@@ -156,53 +166,92 @@ const sports = [
     try {
       initPingPong(ppStage, pp);
     } catch (err) {
+      // kein WebGL: der Block zeigt nur den Text zum Tischtennis
+      console.warn('Spiel nicht verfügbar', err);
       pp.hidden = true;
     }
   }
 </script>
 
 <style>
+  /* gemeinsame Display-Schrift der Seite: Archivo, schmal und fett */
+  .shero__word,
+  .shero__title,
+  .facts strong,
+  .block__title,
+  .tt__title,
+  .game__title,
+  .game__score {
+    font-family: var(--font-sport);
+    font-stretch: 62%;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Einstieg: der Berg vor dem Wort der Jahreszeit ---------- */
   .shero {
+    --frame: clamp(0.4rem, 0.9vw, 0.8rem);
+    --edge: clamp(1.2rem, 3.4vw, 3.2rem);
     position: relative;
-    min-height: 100svh;
+    isolation: isolate;
+    margin: var(--frame);
+    height: calc(100svh - 2 * var(--frame));
+    min-height: 36rem;
+    border-radius: clamp(18px, 2vw, 30px);
     overflow: hidden;
-    padding-top: calc(var(--nav-h) + clamp(2rem, 5vw, 4rem));
-    display: grid;
-    align-content: start;
+    background: var(--paper-2);
   }
-  .shero__sky {
+  /* --peak-y setzt die 3D-Szene: die Höhe des Gipfels im Bild. Das Wort steht so, dass der Gipfel hineinragt. */
+  .shero__word {
     position: absolute;
-    inset: 0;
-    transition: opacity 1.2s var(--ease);
+    inset: calc(var(--peak-y, 26%) - 0.4em) 0 auto 0;
+    z-index: 0;
+    margin: 0;
+    display: grid;
+    justify-items: center;
+    font-size: min(26vw, 46svh);
+    line-height: 0.8;
+    color: var(--orange);
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
-  .shero__sky--winter {
-    background: linear-gradient(180deg, #cfe2f7 0%, #e6eef8 45%, var(--paper) 100%);
+  .shero__word span {
+    grid-area: 1 / 1;
+    transition: opacity 0.7s, transform 0.9s var(--ease);
   }
-  .shero__sky--sommer {
-    background: linear-gradient(180deg, #a9d8f5 0%, #fdeccb 55%, var(--paper) 100%);
+  .shero[data-season='winter'] [data-word='sommer'],
+  .shero[data-season='sommer'] [data-word='winter'] {
     opacity: 0;
-  }
-  .shero[data-season='sommer'] .shero__sky--sommer {
-    opacity: 1;
+    transform: translateY(10%);
   }
   .shero__stage {
+    z-index: 1;
     cursor: grab;
     touch-action: pan-y;
   }
   .shero__stage:global(.is-dragging) {
     cursor: grabbing;
   }
-  .shero__inner {
-    position: relative;
+  .shero__text {
+    position: absolute;
+    left: var(--edge);
+    bottom: var(--edge);
     z-index: 2;
     display: grid;
-    gap: 1.1rem;
     justify-items: start;
+    gap: 0.9rem;
+    max-width: 21rem;
     pointer-events: none;
   }
+  .shero__title {
+    font-size: clamp(3.2rem, 5.6vw, 5.2rem);
+    line-height: 0.88;
+  }
   .shero__lead {
-    max-width: 24em;
     display: grid;
+    font-size: 1.125rem;
+    line-height: 1.45;
   }
   .shero__lead span {
     grid-area: 1 / 1;
@@ -218,12 +267,11 @@ const sports = [
     position: relative;
     display: inline-grid;
     grid-template-columns: 1fr 1fr;
+    margin-top: 0.3rem;
     padding: 0.3rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--card) 80%, transparent);
+    background: #fff;
     border: 1px solid var(--line);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 14px 34px -20px rgba(13, 19, 34, 0.5);
   }
   .season button {
     position: relative;
@@ -231,11 +279,7 @@ const sports = [
     padding: 0.7em 1.4em;
     border-radius: 999px;
     font-weight: 600;
-    transition: color 0.4s;
     white-space: nowrap;
-  }
-  .season button[aria-pressed='true'] {
-    color: var(--paper);
   }
   .season__thumb {
     position: absolute;
@@ -244,170 +288,229 @@ const sports = [
     left: 0.3rem;
     width: calc(50% - 0.3rem);
     border-radius: 999px;
-    background: var(--ink);
-    transition: transform 0.6s var(--ease-spring), background-color 0.6s;
+    background: var(--orange);
+    transition: transform 0.6s var(--ease-spring);
   }
   .shero[data-season='sommer'] .season__thumb {
     transform: translateX(100%);
-    background: var(--orange);
   }
   .shero__hint {
     position: absolute;
-    bottom: 1.4rem;
-    left: 50%;
-    translate: -50% 0;
-    font-size: 0.86rem;
-    color: var(--muted);
+    right: var(--edge);
+    bottom: var(--edge);
     z-index: 2;
+    max-width: 13em;
+    text-align: right;
+    font-size: 0.94rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--muted);
     pointer-events: none;
-    font-weight: 600;
-  }
-  .shero__hint span {
-    text-transform: none;
-    letter-spacing: 0.02em;
-  }
-  :global(.no-webgl) .shero {
-    min-height: 0;
-    padding-bottom: 4rem;
   }
   :global(.no-webgl) .shero__hint {
     display: none;
   }
 
-  .sports {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: clamp(1rem, 2vw, 1.6rem);
+  /* ---------- Motivation ---------- */
+  .why {
+    padding-block: clamp(4rem, 9vw, 8rem);
   }
-  .sport {
+  .why__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(1.5rem, 5vw, 5rem);
+    align-items: end;
+  }
+  .why__title {
+    font-size: clamp(2rem, 4.2vw, 3.6rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+  }
+  .why__text {
+    max-width: 28em;
+    font-size: 1.125rem;
+    color: var(--muted);
+  }
+
+  /* ---------- Zahlen ---------- */
+  .facts {
+    background: #111;
+    color: #fff;
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+  }
+  .facts__row {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+  }
+  .facts__row li {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .facts__row li + li {
+    border-left: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .facts strong {
+    font-size: clamp(4rem, 11vw, 10rem);
+    line-height: 0.85;
+    color: var(--orange);
+  }
+  .facts span {
+    font-weight: 500;
+  }
+
+  /* ---------- Sportarten als Blöcke ---------- */
+  .blocks {
+    padding-block: clamp(3.5rem, 8vw, 7rem) 0;
+  }
+  .blocks__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.8rem, 1.6vw, 1.4rem);
+  }
+  .block {
     position: relative;
-    border-radius: var(--radius);
-    background: var(--card);
-    border: 1px solid var(--line);
-    overflow: hidden;
+    isolation: isolate;
+    min-height: clamp(19rem, 31vw, 27rem);
     display: grid;
-    grid-template-rows: auto 1fr;
-  }
-  .sport__img {
-    aspect-ratio: 4 / 3;
+    align-items: end;
+    border-radius: 28px;
     overflow: hidden;
+    background: #111;
+    color: #fff;
   }
-  .sport__img :global(img) {
+  .block--wide {
+    grid-column: 1 / -1;
+    min-height: clamp(24rem, 46vw, 38rem);
+  }
+  .block__img {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 1.1s var(--ease);
-  }
-  .sport:hover .sport__img :global(img) {
-    transform: scale(1.06);
-  }
-  .sport__body {
-    padding: clamp(1.2rem, 2.2vw, 1.8rem);
-    display: grid;
-    gap: 0.7rem;
-    align-content: start;
-  }
-  .sport__meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.86rem;
-    color: var(--muted);
-    font-weight: 600;
-  }
-  .sport__body p {
-    color: var(--muted);
-    font-size: 0.98rem;
-  }
-  .sport--plain {
-    grid-template-rows: 1fr;
-    color: #fff;
-    border-color: transparent;
-    min-height: 22rem;
-  }
-  .sport--plain .sport__body {
-    align-content: end;
-  }
-  .sport--plain .sport__body p,
-  .sport--plain .sport__meta {
-    color: rgba(255, 255, 255, 0.85);
-  }
-  .sport--plain .chip {
-    border-color: rgba(255, 255, 255, 0.4);
-    background: transparent;
-  }
-  .sport--blue {
-    background: var(--ink);
-  }
-  .sport--orange {
-    background: var(--orange);
-  }
-  .sport--plain::before {
-    content: '';
-    position: absolute;
-    width: 78%;
-    aspect-ratio: 1;
-    right: -18%;
-    top: -22%;
-    border-radius: 50%;
-    border: clamp(18px, 3vw, 34px) solid rgba(255, 255, 255, 0.16);
     transition: transform 1.2s var(--ease);
   }
-  .sport--blue::before {
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    border-color: transparent;
-    width: 60%;
+  .block:hover .block__img {
+    transform: scale(1.05);
   }
-  .sport--plain:hover::before {
-    transform: scale(1.12) rotate(20deg);
+  /* dunkler Verlauf nur unten, damit die weisse Schrift auf jedem Foto lesbar ist */
+  .block::before {
+    content: '';
+    position: absolute;
+    inset: 30% 0 0 0;
+    z-index: -1;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.5) 45%, transparent 100%);
+  }
+  .block--plain::before {
+    display: none;
+  }
+  .block__body {
+    display: grid;
+    gap: 0.5rem;
+    padding: clamp(1.3rem, 2.8vw, 2.6rem);
+  }
+  .block__title {
+    font-size: clamp(2.8rem, 5.2vw, 5rem);
+    line-height: 0.9;
+  }
+  .block--wide .block__title {
+    font-size: clamp(4.5rem, 12vw, 11rem);
+    line-height: 0.82;
+  }
+  .block__text {
+    max-width: 31em;
+    font-size: 1.04rem;
+    line-height: 1.5;
+  }
+  .block__season {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.76);
   }
 
+  /* ---------- Tischtennis mit Spiel ---------- */
+  .tt {
+    grid-column: 1 / -1;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--orange);
+    color: #111;
+  }
+  .tt__info {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(1rem, 4vw, 4rem);
+    align-items: end;
+    padding: clamp(1.3rem, 2.8vw, 2.6rem);
+  }
+  /* «Tischtennis» ist das längste Wort der Seite: die Grösse richtet sich nach der Spaltenbreite */
+  .tt__title {
+    font-size: clamp(3.2rem, 8.4vw, 8rem);
+    line-height: 0.82;
+    color: #fff;
+  }
+  .tt__copy {
+    display: grid;
+    gap: 0.8rem;
+    font-size: 1.04rem;
+    line-height: 1.5;
+  }
+  .tt__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.4rem;
+    font-weight: 600;
+  }
+  .tt__meta span {
+    font-weight: 500;
+  }
+  .tt .link:hover {
+    color: #fff;
+  }
   .game {
     position: relative;
-    height: clamp(26rem, 62vh, 38rem);
-    border-radius: var(--radius);
-    background: var(--card);
-    border: 1px solid var(--line);
+    height: clamp(24rem, 58vh, 34rem);
+    border-top: 1px solid rgba(17, 17, 17, 0.16);
     overflow: hidden;
     touch-action: none;
     cursor: none;
     user-select: none;
     -webkit-user-select: none;
   }
-  .game__head {
+  .game__title {
     position: absolute;
     top: clamp(1.2rem, 2.5vw, 2rem);
-    left: clamp(1.2rem, 2.5vw, 2rem);
-    display: grid;
-    gap: 0.6rem;
+    left: clamp(1.3rem, 2.8vw, 2.6rem);
+    font-size: clamp(1.7rem, 3vw, 2.6rem);
+    line-height: 0.9;
+    color: #fff;
     pointer-events: none;
   }
   .game__best {
     position: absolute;
     top: clamp(1.2rem, 2.5vw, 2rem);
-    right: clamp(1.2rem, 2.5vw, 2rem);
-    font-size: 0.86rem;
-    color: var(--muted);
-    pointer-events: none;
+    right: clamp(1.3rem, 2.8vw, 2.6rem);
     font-weight: 600;
+    pointer-events: none;
   }
   .game__best b {
-    color: var(--ink);
-    font-size: 1.1rem;
-    margin-left: 0.4rem;
+    margin-left: 0.3rem;
+    font-size: 1.15rem;
   }
   .game__score {
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center;
-    font-family: var(--font-display);
-    font-weight: 650;
-    font-size: clamp(11rem, 34vw, 26rem);
-    letter-spacing: -0.033em;
+    font-size: clamp(11rem, 30vw, 24rem);
     line-height: 1;
-    color: color-mix(in srgb, var(--ink) 7%, transparent);
+    color: rgba(255, 255, 255, 0.34);
     pointer-events: none;
   }
   .game__score span {
@@ -419,13 +522,13 @@ const sports = [
   @keyframes pop {
     0% {
       transform: scale(1.18);
-      color: color-mix(in srgb, var(--orange) 40%, transparent);
+      color: #fff;
     }
   }
   .game__overlay {
     position: absolute;
     inset: auto 0 0 0;
-    padding: clamp(1.2rem, 2.5vw, 2rem);
+    padding: clamp(1.2rem, 2.5vw, 2rem) clamp(1.3rem, 2.8vw, 2.6rem);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -440,21 +543,76 @@ const sports = [
     pointer-events: none;
   }
   .game__overlay p {
-    color: var(--muted);
     font-weight: 500;
   }
+  .game__btn {
+    --btn-bg: #fff;
+    --btn-fg: #111;
+  }
+  .game__btn::before {
+    background: #111;
+  }
+  .game__btn:hover {
+    color: #fff;
+  }
 
-  @media (max-width: 980px) {
-    .sports {
-      grid-template-columns: repeat(2, 1fr);
+  /* ---------- Galerie ---------- */
+  .gal {
+    padding-block: clamp(4rem, 9vw, 8rem);
+  }
+  .gal__title {
+    margin-bottom: clamp(1.4rem, 3vw, 2.4rem);
+    font-size: clamp(1.8rem, 3.4vw, 2.9rem);
+    font-weight: 600;
+    letter-spacing: -0.022em;
+  }
+
+  @media (max-width: 900px) {
+    /* Handy und Tablet hochkant: Titel oben, Berg in der Mitte, Schalter unten */
+    .shero__text {
+      inset: calc(var(--nav-h) + 0.6rem) var(--edge) var(--edge) var(--edge);
+      max-width: none;
+      grid-template-rows: auto auto 1fr;
+      align-items: start;
+    }
+    .season {
+      align-self: end;
+      justify-self: center;
+    }
+    /* kleines Wort: es steht höher über dem Gipfel, damit Berg und Wolken es nicht verdecken */
+    .shero__word {
+      top: calc(var(--peak-y, 50%) - 0.66em);
+      font-size: min(25vw, 24svh);
+    }
+    .shero__hint {
+      display: none;
+    }
+    .why__grid,
+    .tt__info {
+      grid-template-columns: 1fr;
+    }
+    .facts__row {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .facts__row li + li {
+      border-left: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      padding-top: 2rem;
     }
   }
   @media (max-width: 760px) {
-    .sports {
+    .blocks__grid {
       grid-template-columns: 1fr;
     }
-    .sport--plain {
-      min-height: 16rem;
+    .block {
+      min-height: 21rem;
+    }
+    .block--wide {
+      min-height: 26rem;
+    }
+    .game__overlay p {
+      flex-basis: 100%;
     }
   }
 </style>
