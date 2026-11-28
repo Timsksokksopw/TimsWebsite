@@ -110,19 +110,21 @@ export function initMusic(el: HTMLElement, ui: HTMLElement) {
   stage.camera.position.set(0, 0, 15);
   const scene = stage.scene;
 
-  /* ---------- Bühnenlicht ---------- */
-  scene.add(new THREE.AmbientLight(0x8899ff, 0.25));
+  /* ---------- Bühnenlicht ----------
+     Die Seite ist schwarz-weiss wie das Logo von Los Trios: Alle Lichter sind weiss (eines kühl, eines warm),
+     damit die Gitarre ihre eigene Farbe behält und die einzige Farbe auf der Bühne ist. */
+  scene.add(new THREE.AmbientLight(0xffffff, 0.22));
   const key = new THREE.SpotLight(0xffffff, 300, 40, 0.5, 0.6, 1.6);
   key.position.set(2, 9, 10);
-  const teal = new THREE.PointLight(0x2ce0d2, 160, 40, 1.6);
-  teal.position.set(-9, 3, 5);
-  const red = new THREE.PointLight(0xff4a2e, 150, 40, 1.6);
-  red.position.set(9, -2, 5);
-  const back = new THREE.DirectionalLight(0x6c93ff, 1.2);
+  const cool = new THREE.PointLight(0xe2eaff, 150, 40, 1.6);
+  cool.position.set(-9, 3, 5);
+  const warm = new THREE.PointLight(0xfff0e0, 140, 40, 1.6);
+  warm.position.set(9, -2, 5);
+  const back = new THREE.DirectionalLight(0xffffff, 1.2);
   back.position.set(0, 4, -8);
-  scene.add(key, key.target, teal, red, back);
+  scene.add(key, key.target, cool, warm, back);
 
-  const beams = [beam(0x2ce0d2), beam(0xff4a2e), beam(0x6c93ff)];
+  const beams = [beam(0xffffff), beam(0xffffff), beam(0xffffff)];
   beams.forEach((b, i) => {
     b.position.set([-6.5, 6.5, 0][i], 8.5, -5 - i);
     scene.add(b);
@@ -135,18 +137,19 @@ export function initMusic(el: HTMLElement, ui: HTMLElement) {
   dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
   const dust = new THREE.Points(
     dustGeo,
-    new THREE.PointsMaterial({ color: 0xbfe9ff, size: 0.045, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }),
+    new THREE.PointsMaterial({ color: 0xffffff, size: 0.045, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }),
   );
   scene.add(dust);
 
   /* ---------- Gitarre, Plektrum, Kabel ---------- */
-  const guitar = buildGuitar({ glow: 0x2ce0d2 });
+  const guitar = buildGuitar({ glow: 0xffffff });
   const rig = new THREE.Group();
   rig.add(guitar.group);
   scene.add(rig);
 
   const pick = new THREE.Group();
-  const pickModel = makePick(0xff4a2e);
+  // weisses Plektrum mit schwarzem T, wie das Plektrum im Bandlogo
+  const pickModel = makePick(0xf2f2f2, 0x111111);
   pickModel.scale.setScalar(0.2);
   pickModel.rotation.set(0.95, 0, 0.35);
   pick.add(pickModel);
@@ -289,7 +292,7 @@ export function initMusic(el: HTMLElement, ui: HTMLElement) {
     for (let f = 1; f <= 4; f++) s += `<line x1="8" x2="56" y1="${Y(f)}" y2="${Y(f)}" stroke="currentColor" stroke-opacity=".3"/>`;
     for (let i = 0; i < 6; i++) s += `<line x1="${X(i)}" x2="${X(i)}" y1="15" y2="${Y(4)}" stroke="currentColor" stroke-opacity=".5"/>`;
     frets.forEach((f, i) => {
-      if (f < 0) s += `<path d="M${X(i) - 2.2} 5.2l4.4 4.4m0-4.4l-4.4 4.4" stroke="#ff6a52" stroke-width="1.3" fill="none"/>`;
+      if (f < 0) s += `<path d="M${X(i) - 2.2} 5.2l4.4 4.4m0-4.4l-4.4 4.4" stroke="#9a9a9a" stroke-width="1.3" fill="none"/>`;
       else if (f === 0) s += `<circle cx="${X(i)}" cy="7.4" r="2.3" fill="none" stroke="currentColor" stroke-opacity=".7" stroke-width="1.1"/>`;
       else s += `<circle cx="${X(i)}" cy="${Y(f) - 5.2}" r="3.7" fill="var(--accent)"/>`;
     });
@@ -844,8 +847,8 @@ export function initMusic(el: HTMLElement, ui: HTMLElement) {
     // Licht reagiert auf das, was wirklich aus dem Amp kommt
     const level = audio.level();
     flash = Math.max(damp(flash, 0, 3.5, dt), Math.min(1, level * 1.6));
-    teal.intensity = 160 + flash * 280 + Math.sin(t * 1.3) * 20;
-    red.intensity = 150 + flash * 240 + Math.cos(t * 1.1) * 20;
+    cool.intensity = 150 + flash * 280 + Math.sin(t * 1.3) * 20;
+    warm.intensity = 140 + flash * 240 + Math.cos(t * 1.1) * 20;
     beams.forEach((b, i) => {
       b.rotation.z = Math.sin(t * 0.35 + i * 2.1) * 0.32 + [0.35, -0.35, 0][i];
       (b.material as THREE.ShaderMaterial).uniforms.uPower.value = 0.75 + flash * 1.6 + Math.sin(t * 0.9 + i) * 0.12;
@@ -858,7 +861,7 @@ export function initMusic(el: HTMLElement, ui: HTMLElement) {
       const w = scope.width;
       const h = scope.height;
       scopeCtx.clearRect(0, 0, w, h);
-      scopeCtx.strokeStyle = audio.on ? 'rgba(44, 224, 210, 0.9)' : 'rgba(255, 255, 255, 0.25)';
+      scopeCtx.strokeStyle = audio.on ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.25)';
       scopeCtx.lineWidth = 2;
       scopeCtx.beginPath();
       const wave = audio.wave;

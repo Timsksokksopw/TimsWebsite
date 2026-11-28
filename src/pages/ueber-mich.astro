@@ -296,4 +296,22 @@ const antrieb = [
       position: static;
     }
   }
+  /* schmales Handy: Die Cap rückt näher ans Foto, sonst ragt sie links über den Bildschirmrand.
+     Die Links zu Wendico und Swisscom stapeln Ort und Titel, damit «Plattformentwicklung» Platz hat. */
+  @media (max-width: 520px) {
+    .ahero__cap {
+      left: -12%;
+    }
+    .jobs a {
+      grid-template-columns: minmax(0, 1fr) auto;
+      row-gap: 0.25rem;
+    }
+    .jobs span {
+      grid-column: 1 / -1;
+    }
+    .jobs strong {
+      hyphens: auto;
+      overflow-wrap: anywhere;
+    }
+  }
 </style>

@@ -1,4 +1,8 @@
 ---
+// Wendico-Seite mit Akzenten von wendico.ch: Waldgrün, Lime, Manrope und DM Sans,
+// Bergfoto über den Wolken, zweizeilige Titel (Aussage, dann Pointe) und grosse runde Flächen.
+import '@fontsource-variable/manrope/wght.css';
+import '@fontsource-variable/dm-sans/wght.css';
 import { Image, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { foto } from '../data/fotos';
@@ -6,6 +10,7 @@ import { site } from '../data/site';
 import { projekte } from '../data/projekte';
 import wendicoLogo from '../assets/logos/wendico.png';
 
+const berge = foto('snowboard-nebelmeer');
 const suit = foto('tim-anzug');
 const cards = await Promise.all(
   projekte.map(async (p) => ({ name: p.name, tag: p.tag, url: p.url, img: (await getImage({ src: p.img, width: 960, format: 'webp' })).src })),
@@ -21,7 +26,7 @@ const leistungen = [
   },
   {
     title: 'Software',
-    sub: 'Web-Apps, Portale & SaaS',
+    sub: 'Web-Apps, Portale und SaaS',
     text: 'Individuelle Software, die Prozesse vereinfacht und manuelle Arbeit abnimmt: Web-Apps, Kundenportale und SaaS auf skalierbarer Architektur.',
     href: `${site.links.wendicoLeistungen}/software`,
   },
@@ -44,29 +49,34 @@ const leistungen = [
     href: `${site.links.wendicoLeistungen}/social-media`,
   },
 ];
+const neuesFenster = ' (öffnet neues Fenster)';
 ---
 
 <Base
   page="wendico"
+  world="wendico"
   title="Wendico"
   description="Wendico ist die Digitalagentur von Tim Biedermann und Panat Ruangsri: Websites, Software und SaaS, KI-Lösungen, Umsatzsysteme und Social Media."
 >
-  <section class="page-hero">
-    <div class="container whero">
-      <div class="stack" style="--gap:1.4rem">
-        <p class="eyebrow" data-reveal>Wendico KLG · Mitgründer & Co-CEO</p>
-        <h1 class="t-page whero__title" data-reveal>
-          <Image src={wendicoLogo} alt="" width={220} class="whero__logo" loading="eager" />Wendico
+  <section class="whero" data-nav-tone="dark">
+    <div class="whero__panel">
+      <Image class="whero__bg" src={berge.src} alt="" widths={[800, 1280, 1600]} sizes="100vw" loading="eager" fetchpriority="high" />
+      <div class="whero__content">
+        <span class="whero__logo"><Image src={wendicoLogo} alt="" width={120} loading="eager" /></span>
+        <h1 class="whero__title">
+          <span>Wendico.</span>
+          <span>Meine Digitalagentur.</span>
         </h1>
-        <p class="t-lead t-muted whero__lead" data-reveal style="--d:2">
-          Meine Digitalagentur. Zusammen mit Panat Ruangsri baue ich Websites, Software und SaaS-Lösungen für Unternehmen, Vereine und Marken.
+        <p class="whero__lead">
+          Zusammen mit Panat Ruangsri baue ich Websites, Software und SaaS-Lösungen für Unternehmen, Vereine und Marken. Bei der Wendico KLG bin ich
+          Mitgründer und Co-CEO.
         </p>
-        <div class="btn-row" data-reveal style="--d:3">
-          <a class="btn btn--accent" href={site.links.wendicoTermin} target="_blank" rel="noopener">30-Minuten-Erstgespräch <span class="arrow">↗</span></a>
-          <a class="btn btn--ghost" href={site.links.wendico} target="_blank" rel="noopener">wendico.ch <span class="arrow">↗</span></a>
+        <div class="btn-row">
+          <a class="btn w-btn" href={site.links.wendicoTermin} target="_blank" rel="noopener">30-Minuten-Erstgespräch buchen<span class="sr-only">{neuesFenster}</span></a>
+          <a class="btn w-btn w-btn--ghost" href={site.links.wendico} target="_blank" rel="noopener">Zu wendico.ch<span class="sr-only">{neuesFenster}</span></a>
         </div>
       </div>
-      <ul class="whero__facts" data-reveal style="--d:4">
+      <ul class="whero__facts">
         <li><strong>{projekte.length}</strong><span>Projekte umgesetzt</span></li>
         <li><strong>{leistungen.length}</strong><span>Leistungen aus einer Hand</span></li>
         <li><strong>2</strong><span>Gründer</span></li>
@@ -74,57 +84,63 @@ const leistungen = [
     </div>
   </section>
 
-  <section class="section section--tight">
+  <section class="part">
     <div class="container">
-      <div class="section-head">
-        <p class="eyebrow" data-reveal>Leistungen</p>
-        <h2 class="t-xl" data-split>Was wir bauen.</h2>
-      </div>
-      <ol class="svc">
+      <h2 class="w-h2">
+        <span>Was wir bauen.</span>
+        <span>Fünf Leistungen aus einer Hand.</span>
+      </h2>
+      <ul class="svc">
         {
-          leistungen.map((l, i) => (
-            <li data-reveal style={`--d:${i % 3}`}>
+          leistungen.map((l) => (
+            <li>
               <a class="svc__row" href={l.href} target="_blank" rel="noopener">
-                <span class="svc__n">0{i + 1}</span>
                 <span class="svc__title">
                   <strong>{l.title}</strong>
-                  <em>{l.sub}</em>
+                  <span>{l.sub}</span>
                 </span>
                 <span class="svc__text">{l.text}</span>
-                <span class="svc__arrow" aria-hidden="true">↗</span>
+                <span class="svc__go" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9" /></svg>
+                </span>
+                <span class="sr-only">{neuesFenster}</span>
               </a>
             </li>
           ))
         }
-      </ol>
+      </ul>
     </div>
   </section>
 
-  <section class="section section--tight projects">
+  <section class="projects" data-nav-tone="dark">
     <div class="carousel" data-carousel>
       <div class="container carousel__head">
-        <div>
-          <p class="eyebrow">Projekte</p>
-          <h3 class="t-l">Gebaut mit Wendico</h3>
-        </div>
-        <p class="carousel__hint" aria-hidden="true">Ziehen zum Drehen · Klick öffnet die Website</p>
+        <h2 class="w-h2 w-h2--dark">
+          <span>Gebaut mit Wendico.</span>
+          <span>{cards.length} Projekte bisher.</span>
+        </h2>
+        <p class="carousel__hint" aria-hidden="true">Ziehen zum Drehen. Ein Klick öffnet die Website.</p>
       </div>
       <div class="carousel__stage stage3d" data-carousel-stage data-cursor="grab" tabindex="0" aria-label="Projekt-Karussell. Mit den Pfeiltasten blättern."></div>
       <div class="container carousel__bar">
-        <button class="carousel__nav" data-c-prev aria-label="Vorheriges Projekt">←</button>
+        <button class="carousel__nav" data-c-prev aria-label="Vorheriges Projekt">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7" /></svg>
+        </button>
         <div class="carousel__info" aria-live="polite">
-          <span class="carousel__count" data-c-count>01 / {String(cards.length).padStart(2, '0')}</span>
-          <strong class="t-m" data-c-title>{cards[0].name}</strong>
-          <span class="chip" data-c-tag>{cards[0].tag}</span>
-          <a class="link" data-c-link href={cards[0].url} target="_blank" rel="noopener"><span>{cards[0].url}</span> ↗</a>
+          <span class="carousel__count" data-c-count>1 von {cards.length}</span>
+          <strong class="carousel__title" data-c-title>{cards[0].name}</strong>
+          <span class="carousel__tag" data-c-tag>{cards[0].tag}</span>
+          <a class="link" data-c-link href={cards[0].url} target="_blank" rel="noopener"><span>{cards[0].url}</span><span class="sr-only">{neuesFenster}</span></a>
         </div>
-        <button class="carousel__nav" data-c-next aria-label="Nächstes Projekt">→</button>
+        <button class="carousel__nav" data-c-next aria-label="Nächstes Projekt">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+        </button>
       </div>
       <ul class="carousel__fallback container">
         {
           cards.map((c) => (
             <li>
-              <a class="link" href={c.url} target="_blank" rel="noopener">{c.name}</a>
+              <a class="link" href={c.url} target="_blank" rel="noopener">{c.name}<span class="sr-only">{neuesFenster}</span></a>
               <span>{c.tag}</span>
             </li>
           ))
@@ -134,22 +150,21 @@ const leistungen = [
     </div>
   </section>
 
-  <section class="section">
-    <div class="container grid-2 role">
-      <div class="stack" style="--gap:1.4rem">
-        <p class="eyebrow" data-reveal>Meine Rolle</p>
-        <h2 class="t-xl" data-split>Operativ, Finanzen, Systeme.</h2>
-        <p class="t-lead t-muted" data-reveal>
-          Bei Wendico kümmere ich mich darum, dass Projekte sauber laufen: Planung, Finanzen und die Technik im Hintergrund. Und ich baue selbst
-          mit, vom ersten Entwurf bis zum Deployment.
+  <section class="part">
+    <div class="container role">
+      <div class="role__copy">
+        <h2 class="w-h2">
+          <span>Meine Rolle.</span>
+          <span>Operativ, Finanzen, Systeme.</span>
+        </h2>
+        <p class="role__text">
+          Bei Wendico kümmere ich mich darum, dass Projekte sauber laufen: Planung, Finanzen und die Technik im Hintergrund. Und ich baue selbst mit,
+          vom ersten Entwurf bis zum Deployment.
         </p>
-        <ul class="chips" data-reveal>
-          {['Projektleitung', 'Entwicklung', 'Hosting & Betrieb', 'Finanzen'].map((c) => <li class="chip">{c}</li>)}
-        </ul>
       </div>
-      <figure class="quote" data-tilt="5" data-reveal="scale">
-        <div class="media quote__img">
-          <Image src={suit.src} alt={suit.alt} widths={[480, 800, 1024]} sizes="(max-width: 760px) 92vw, 40vw" />
+      <figure class="quote" data-tilt="4">
+        <div class="quote__img">
+          <Image src={suit.src} alt={suit.alt} widths={[480, 800, 1024]} sizes="(max-width: 900px) 92vw, 36vw" />
         </div>
         <blockquote>
           <p>«Eine Website soll nicht nur gut aussehen. Sie soll zeigen, wofür eine Marke wirklich steht.»</p>
@@ -158,12 +173,12 @@ const leistungen = [
     </div>
   </section>
 
-  <section class="section section--tight">
+  <section class="last">
     <div class="container">
-      <a class="cta" href={site.links.wendicoTermin} target="_blank" rel="noopener" data-reveal>
+      <a class="cta" href={site.links.wendicoTermin} target="_blank" rel="noopener">
         <span class="cta__label">Projekt im Kopf?</span>
         <strong>Lass uns 30 Minuten darüber reden.</strong>
-        <span class="cta__go">Erstgespräch auf wendico.ch buchen <i aria-hidden="true">↗</i></span>
+        <span class="btn cta__go">Erstgespräch auf wendico.ch buchen<span class="sr-only">{neuesFenster}</span></span>
       </a>
     </div>
   </section>
@@ -178,14 +193,20 @@ const leistungen = [
     const data = root?.querySelector('[data-carousel-data]')?.textContent;
     if (root && stageEl && data) {
       const q = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
-      initCarousel(stageEl, JSON.parse(data) as Project[], {
-        title: q('[data-c-title]'),
-        tag: q('[data-c-tag]'),
-        link: q<HTMLAnchorElement>('[data-c-link]'),
-        count: q('[data-c-count]'),
-        prev: q('[data-c-prev]'),
-        next: q('[data-c-next]'),
-      });
+      initCarousel(
+        stageEl,
+        JSON.parse(data) as Project[],
+        {
+          title: q('[data-c-title]'),
+          tag: q('[data-c-tag]'),
+          link: q<HTMLAnchorElement>('[data-c-link]'),
+          count: q('[data-c-count]'),
+          prev: q('[data-c-prev]'),
+          next: q('[data-c-next]'),
+        },
+        // Karten am Rand blenden in das Waldgrün des Abschnitts aus
+        0x14231d,
+      );
       root.classList.add('is-3d');
     }
   } catch (err) {
@@ -195,156 +216,224 @@ const leistungen = [
 </script>
 
 <style>
-  .whero {
-    display: grid;
-    grid-template-columns: 1.4fr 0.6fr;
-    gap: clamp(2rem, 5vw, 5rem);
-    align-items: end;
+  /* zweizeilige Titel wie auf wendico.ch: erst die Aussage, dann die Pointe in Grün */
+  .w-h2 {
+    font-size: clamp(2rem, 4.5vw, 4.1rem);
+    line-height: 1.05;
+    text-wrap: initial;
   }
-  .whero__title {
-    display: flex;
-    align-items: center;
-    gap: 0.22em;
+  .w-h2 span {
+    display: block;
+  }
+  .w-h2 span + span {
+    color: var(--accent);
+  }
+  .w-h2--dark {
+    color: #fff;
+  }
+  .w-h2--dark span + span {
+    color: #a5b5ac;
+  }
+  .part {
+    padding-block: clamp(4rem, 9vw, 8rem);
+  }
+
+  /* ---------- Einstieg: Berge über den Wolken, waldgrün überzogen ---------- */
+  .whero {
+    --pad: clamp(0.6rem, 1.8vw, 1.8rem);
+    padding: var(--pad);
+  }
+  .whero__panel {
+    position: relative;
+    isolation: isolate;
+    min-height: min(56rem, 100svh - 2 * var(--pad));
+    display: grid;
+    grid-template-rows: 1fr auto;
+    align-items: end;
+    border-radius: clamp(22px, 3vw, 40px);
+    overflow: hidden;
+    background: var(--forest);
+    color: #fff;
+    box-shadow: rgba(26, 47, 38, 0.2) 0 30px 65px;
+  }
+  .whero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 0% 55%;
+    /* vergrössert und links verankert: der rote Pistenpfosten am rechten Bildrand fällt aus dem Ausschnitt */
+    transform: scale(1.34);
+    transform-origin: 0% 62%;
+  }
+  .whero__panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(100deg, rgba(13, 34, 26, 0.95) 0%, rgba(14, 58, 42, 0.84) 46%, rgba(14, 58, 42, 0.5) 100%);
+  }
+  .whero__content {
+    display: grid;
+    justify-items: start;
+    gap: clamp(1.1rem, 2vw, 1.6rem);
+    padding: calc(var(--nav-h) + 2rem) clamp(1.4rem, 5vw, 5rem) clamp(1.6rem, 3.6vw, 3.4rem);
   }
   .whero__logo {
-    width: 0.92em;
-    height: auto;
+    display: inline-flex;
+    padding: 0.65rem 1.15rem;
+    border-radius: 999px;
+    background: #fff;
+  }
+  .whero__logo :global(img) {
+    height: 1.9rem;
+    width: auto;
+  }
+  .whero__title {
+    font-size: clamp(2.6rem, 6.4vw, 5.8rem);
+    line-height: 1.02;
+    text-wrap: initial;
+  }
+  .whero__title span {
+    display: block;
+  }
+  .whero__title span + span {
+    color: rgba(255, 255, 255, 0.72);
   }
   .whero__lead {
-    max-width: 32em;
+    max-width: 35em;
+    font-size: clamp(1.05rem, 1rem + 0.3vw, 1.25rem);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.88);
   }
+  .w-btn {
+    --btn-bg: var(--lime);
+    --btn-fg: var(--forest);
+  }
+  .w-btn::before {
+    background: #fff;
+  }
+  .w-btn:hover {
+    color: var(--forest);
+  }
+  .w-btn--ghost {
+    --btn-bg: rgba(255, 255, 255, 0.1);
+    --btn-fg: #fff;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  /* Zahlenreihe am unteren Rand, wie im Kopf von wendico.ch */
   .whero__facts {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 clamp(1.4rem, 5vw, 5rem);
     display: grid;
-    gap: 1.1rem;
-    border-left: 1px solid var(--line);
-    padding-left: clamp(1.2rem, 2.5vw, 2.2rem);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .whero__facts li {
+    display: grid;
+    gap: 0.2rem;
+    padding: clamp(1rem, 2vw, 1.6rem) 0;
+  }
+  .whero__facts li + li {
+    padding-left: clamp(1rem, 3vw, 2.4rem);
+    border-left: 1px solid rgba(255, 255, 255, 0.16);
   }
   .whero__facts strong {
-    display: block;
-    font-family: var(--font-display);
-    font-size: clamp(2.2rem, 4.4vw, 3.6rem);
-    font-weight: 650;
-    letter-spacing: -0.025em;
+    font-family: var(--font-wendico);
+    font-size: clamp(2rem, 4.2vw, 3.4rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
     line-height: 1;
-    color: var(--accent);
   }
   .whero__facts span {
-    color: var(--muted);
-    font-size: 0.94rem;
+    font-size: 0.96rem;
+    color: #a5b5ac;
   }
 
+  /* ---------- Leistungen ---------- */
   .svc {
     list-style: none;
-    margin: 0;
+    margin: clamp(2rem, 4vw, 3.4rem) 0 0;
     padding: 0;
     border-top: 1px solid var(--line);
   }
   .svc__row {
-    position: relative;
     display: grid;
-    grid-template-columns: 3.2rem minmax(13rem, 0.8fr) 1.4fr auto;
+    grid-template-columns: minmax(14rem, 0.8fr) 1.4fr auto;
     gap: 0.6rem clamp(1rem, 3vw, 3rem);
     align-items: center;
-    padding: clamp(1.2rem, 2.6vw, 2rem) clamp(0rem, 1vw, 1rem);
+    padding: clamp(1.2rem, 2.4vw, 1.9rem) clamp(0rem, 1vw, 1rem);
     border-bottom: 1px solid var(--line);
     transition: padding 0.5s var(--ease), background-color 0.4s;
   }
   .svc__row:hover,
   .svc__row:focus-visible {
-    padding-inline: clamp(0.8rem, 2vw, 1.8rem);
+    padding-inline: clamp(0.9rem, 2vw, 1.8rem);
     background: var(--card);
-  }
-  .svc__n {
-    font-style: normal;
-    font-size: 1.1rem;
-    color: var(--accent);
-    font-weight: 600;
   }
   .svc__title {
     display: grid;
-    gap: 0.25rem;
+    gap: 0.3rem;
   }
   .svc__title strong {
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 3.2vw, 2.7rem);
-    font-weight: 620;
-    letter-spacing: -0.022em;
-    line-height: 1;
+    font-family: var(--font-wendico);
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
   }
-  .svc__title em {
-    font-size: 1.02rem;
-    color: var(--muted);
-    font-weight: 600;
-  }
-  .svc__text {
-    color: var(--muted);
-    max-width: 34em;
-  }
-  .svc__arrow {
-    font-size: 1.5rem;
-    transition: transform 0.5s var(--ease-spring), color 0.3s;
-  }
-  .svc__row:hover .svc__arrow {
-    transform: translate(0.2em, -0.2em);
+  .svc__title span {
+    font-weight: 500;
     color: var(--accent);
   }
+  .svc__text {
+    max-width: 36em;
+    color: var(--muted);
+  }
+  .svc__go {
+    display: grid;
+    place-items: center;
+    width: 3.1rem;
+    height: 3.1rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    transition: background-color 0.3s, border-color 0.3s, transform 0.5s var(--ease-spring);
+  }
+  .svc__row:hover .svc__go,
+  .svc__row:focus-visible .svc__go {
+    background: var(--lime);
+    border-color: var(--lime);
+    transform: rotate(8deg) scale(1.06);
+  }
 
+  /* ---------- Projekte: dunkles Waldgrün ---------- */
   .projects {
-    background: var(--card);
-    border-block: 1px solid var(--line);
-    overflow: hidden;
-  }
-  .projects .carousel {
-    margin-top: 0;
-  }
-  .quote {
-    position: relative;
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: #07070a;
+    background: var(--forest);
     color: #fff;
-    max-width: 30rem;
-    justify-self: end;
-  }
-  .quote__img {
-    border-radius: 0;
-    aspect-ratio: 1;
-  }
-  .quote blockquote {
-    margin: 0;
-    padding: clamp(1.2rem, 2.4vw, 2rem);
-    font-family: var(--font-display);
-    font-size: clamp(1.2rem, 1.9vw, 1.6rem);
-    font-weight: 600;
-    letter-spacing: -0.014em;
-    line-height: 1.18;
-  }
-
-  .carousel {
-    margin-top: clamp(3.5rem, 8vw, 7rem);
+    padding-block: clamp(4rem, 9vw, 8rem);
+    overflow: hidden;
   }
   .carousel__head {
     display: flex;
     justify-content: space-between;
     align-items: end;
-    gap: 1rem;
+    gap: 1rem 2rem;
     flex-wrap: wrap;
   }
-  .carousel__head .eyebrow {
-    margin-bottom: 0.8rem;
-  }
   .carousel__hint {
-    font-size: 0.86rem;
-    color: var(--muted);
-    font-weight: 600;
+    font-size: 0.94rem;
+    color: #a5b5ac;
   }
   .carousel__stage {
     position: relative;
     inset: auto;
     height: clamp(17rem, 36vw, 27rem);
+    margin-top: clamp(1rem, 3vw, 2.5rem);
     cursor: grab;
     touch-action: pan-y;
     display: none;
@@ -360,6 +449,7 @@ const leistungen = [
     align-items: center;
     justify-content: center;
     gap: clamp(0.8rem, 3vw, 2.5rem);
+    margin-top: 1.2rem;
   }
   .carousel:global(.is-3d) .carousel__bar {
     display: flex;
@@ -367,31 +457,47 @@ const leistungen = [
   .carousel__info {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
-    gap: 0.5rem 1rem;
+    gap: 0.4rem 1rem;
     min-width: min(100%, 28rem);
     text-align: center;
   }
   .carousel__count {
-    font-size: 0.86rem;
-    color: var(--muted);
     flex-basis: 100%;
-    font-weight: 600;
+    font-size: 0.94rem;
+    color: #a5b5ac;
+  }
+  .carousel__title {
+    font-family: var(--font-wendico);
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  .carousel__tag {
+    color: #a5b5ac;
+  }
+  .carousel .link:hover {
+    color: var(--lime);
   }
   .carousel__nav {
+    display: grid;
+    place-items: center;
     width: 3.4rem;
     height: 3.4rem;
-    border-radius: 50%;
-    border: 1.5px solid var(--line);
-    font-size: 1.2rem;
     flex: none;
-    transition: background-color 0.3s, color 0.3s, transform 0.4s var(--ease-spring);
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.4s var(--ease-spring);
   }
   .carousel__nav:hover {
-    background: var(--ink);
-    color: var(--paper);
+    background: var(--lime);
+    border-color: var(--lime);
+    color: var(--forest);
     transform: scale(1.08);
+  }
+  .projects :global(:focus-visible) {
+    outline-color: var(--lime);
   }
   .carousel__fallback {
     list-style: none;
@@ -402,9 +508,9 @@ const leistungen = [
     gap: 0.8rem 2rem;
   }
   .carousel__fallback span {
-    color: var(--muted);
-    font-size: 0.85rem;
     margin-left: 0.5rem;
+    font-size: 0.9rem;
+    color: #a5b5ac;
   }
   .carousel:global(.is-3d) .carousel__fallback {
     position: absolute;
@@ -414,65 +520,132 @@ const leistungen = [
     clip-path: inset(50%);
   }
 
+  /* ---------- Meine Rolle ---------- */
+  .role {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+  }
+  .role__text {
+    margin-top: 1.6rem;
+    max-width: 33em;
+    font-size: clamp(1.05rem, 1rem + 0.35vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .quote {
+    position: relative;
+    justify-self: end;
+    max-width: 29rem;
+    border-radius: clamp(22px, 3vw, 40px);
+    overflow: hidden;
+    background: var(--forest);
+    color: #fff;
+    box-shadow: rgba(26, 47, 38, 0.2) 0 30px 65px;
+  }
+  .quote__img {
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+  .quote__img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .quote blockquote {
+    margin: 0;
+    padding: clamp(1.3rem, 2.4vw, 2rem);
+    font-family: var(--font-wendico);
+    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  /* ---------- Schluss: Lime, die Farbe der Knöpfe auf wendico.ch ---------- */
+  .last {
+    padding-bottom: clamp(4rem, 9vw, 8rem);
+  }
   .cta {
     display: grid;
-    gap: 0.6rem;
+    justify-items: start;
+    gap: 0.8rem;
     padding: clamp(2rem, 6vw, 5rem);
-    border-radius: var(--radius);
-    background: #0f1012;
-    color: #f3efe6;
+    border-radius: clamp(22px, 3vw, 40px);
+    background: var(--lime);
+    color: var(--forest);
     transition: transform 0.6s var(--ease);
   }
   .cta:hover {
     transform: translateY(-4px);
   }
   .cta__label {
-    font-style: normal;
-    font-size: 1.25rem;
-    color: #d9a94e;
-    font-weight: 600;
+    font-size: 1.15rem;
+    font-weight: 500;
   }
   .cta strong {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5.4vw, 4.6rem);
-    font-weight: 620;
-    letter-spacing: -0.025em;
-    line-height: 1;
     max-width: 14em;
+    font-family: var(--font-wendico);
+    font-size: clamp(2rem, 5.2vw, 4.4rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.04;
   }
   .cta__go {
-    margin-top: 0.8rem;
-    font-weight: 600;
-    color: #d9a94e;
+    --btn-bg: var(--forest);
+    --btn-fg: #fff;
+    margin-top: 1rem;
+    line-height: 1.2;
   }
-  .cta__go i {
-    font-style: normal;
-    display: inline-block;
-    transition: transform 0.5s var(--ease-spring);
+  .cta__go::before {
+    background: #fff;
   }
-  .cta:hover .cta__go i {
-    transform: translate(0.2em, -0.2em);
+  .cta:hover .cta__go,
+  .cta:focus-visible .cta__go {
+    color: var(--forest);
+  }
+  .cta:hover .cta__go::before,
+  .cta:focus-visible .cta__go::before {
+    transform: translateY(0);
   }
 
   @media (max-width: 900px) {
-    .whero {
-      grid-template-columns: 1fr;
-    }
-    .whero__facts {
-      grid-template-columns: repeat(3, 1fr);
-      border-left: 0;
-      padding-left: 0;
-      border-top: 1px solid var(--line);
-      padding-top: 1.2rem;
-    }
     .svc__row {
-      grid-template-columns: 2.4rem 1fr auto;
+      grid-template-columns: 1fr auto;
     }
     .svc__text {
-      grid-column: 2 / -1;
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .svc__go {
+      grid-row: 1;
+      grid-column: 2;
+    }
+    .role {
+      grid-template-columns: 1fr;
     }
     .quote {
       justify-self: start;
+    }
+  }
+  @media (max-width: 640px) {
+    /* die Blätter-Knöpfe bleiben im Bild: der Text dazwischen darf schrumpfen */
+    .carousel__info {
+      min-width: 0;
+      flex: 1;
+    }
+    .carousel__nav {
+      width: 2.9rem;
+      height: 2.9rem;
+    }
+  }
+  @media (max-width: 520px) {
+    .whero__facts span {
+      font-size: 0.84rem;
+    }
+    .whero__facts li + li {
+      padding-left: 0.8rem;
     }
   }
 </style>

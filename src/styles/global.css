@@ -54,6 +54,39 @@
   --accent: #c2410c;
 }
 
+/* ---------- Welt Swisscom: Weiss, Navy und Blau, ruhig wie ein Konzernauftritt (ohne Swisscom-Logo) ---------- */
+:root[data-world='swisscom'] {
+  --navy: #001155;
+  --paper-2: #f3f5f8;
+  --card: #f3f5f8;
+  --ink: #1f1e23;
+  --muted: #555b66;
+  --line: #d9dee7;
+  --accent: #0445c8;
+}
+
+/* ---------- Welt Wendico: Farben und Schriften von wendico.ch als Akzent ---------- */
+:root[data-world='wendico'] {
+  --forest: #14231d;
+  --lime: #d8ff71;
+  --paper: #f4f7f4;
+  --paper-2: #e8eee9;
+  --card: #ffffff;
+  --ink: #14231d;
+  --muted: #55645c;
+  --line: rgba(20, 35, 29, 0.14);
+  --accent: #176b4b;
+}
+/* nur der Inhalt wechselt die Schrift; Leiste, Menü und Fusszeile bleiben im gemeinsamen Rahmen */
+:root[data-world='wendico'] main {
+  font-family: var(--font-wendico-body);
+}
+:root[data-world='wendico'] main :is(h1, h2, h3, h4) {
+  font-family: var(--font-wendico);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
 :root[data-theme='stage'] {
   --paper: #06080c;
   --paper-2: #0c1016;
@@ -65,6 +98,23 @@
   --accent: #2ce0d2;
   --on-accent: #04100f;
   --gold: #d9a94e;
+  --logo-a: #f8dc8e;
+  --logo-b: #d9a94e;
+  --logo-c: #a06f1e;
+  color-scheme: dark;
+}
+
+/* ---------- Welt Los Trios: nur Schwarz und Weiss, wie das Bandlogo ----------
+   Steht nach dem stage-Block, weil die Musik-Seite beides trägt und der spätere Block gewinnt. */
+:root[data-world='lostrios'] {
+  --paper: #000000;
+  --paper-2: #0d0d0d;
+  --card: #111111;
+  --ink: #ffffff;
+  --muted: #a6a6a6;
+  --line: rgba(255, 255, 255, 0.18);
+  --accent: #ffffff;
+  --on-accent: #000000;
   --logo-a: #f8dc8e;
   --logo-b: #d9a94e;
   --logo-c: #a06f1e;

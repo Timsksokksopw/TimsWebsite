@@ -1,4 +1,4 @@
-// Arbeit-Seite: (1) Plattform-Stack als Explosionszeichnung, (2) 3D-Karussell der Wendico-Projekte.
+// (1) Plattform-Stack als Explosionszeichnung (Arbeit-Seite), (2) 3D-Karussell der Projekte (Wendico-Seite).
 import * as THREE from 'three';
 import { Stage, addStudioLights, COLORS, damp, reducedMotion } from './stage';
 import { buildStackModel } from './stack-model';
@@ -81,7 +81,13 @@ export interface Project {
   img: string;
 }
 
-export function initCarousel(el: HTMLElement, projects: Project[], ui: { title: HTMLElement; tag: HTMLElement; link: HTMLAnchorElement; count: HTMLElement; prev: HTMLElement; next: HTMLElement }) {
+/** tint: Farbe des Abschnitts, in die die Karten am Rand ausblenden */
+export function initCarousel(
+  el: HTMLElement,
+  projects: Project[],
+  ui: { title: HTMLElement; tag: HTMLElement; link: HTMLAnchorElement; count: HTMLElement; prev: HTMLElement; next: HTMLElement },
+  tint: number = COLORS.paper,
+) {
   const stage = new Stage(el, { fov: 30 });
   const n = projects.length;
   const W = 3.3;
@@ -110,7 +116,7 @@ export function initCarousel(el: HTMLElement, projects: Project[], ui: { title: 
         uLoaded: { value: 0 },
         uFocus: { value: 0 },
         uAspect: { value: W / H },
-        uTint: { value: new THREE.Color(COLORS.paper) },
+        uTint: { value: new THREE.Color(tint) },
       },
       alphaToCoverage: true,
       toneMapped: false,
@@ -179,7 +185,7 @@ export function initCarousel(el: HTMLElement, projects: Project[], ui: { title: 
     ui.tag.textContent = p.tag;
     ui.link.href = p.url;
     ui.link.querySelector('span')!.textContent = p.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
-    ui.count.textContent = `${String(i + 1).padStart(2, '0')} / ${String(n).padStart(2, '0')}`;
+    ui.count.textContent = `${i + 1} von ${n}`;
   };
   const nearest = () => ((Math.round(-rot / step) % n) + n) % n;
   const goTo = (i: number) => {

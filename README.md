@@ -71,9 +71,9 @@ Vollbild-Menü, Fusszeile, Fliesstext in Schibsted Grotesk). Farben und Titelsch
 | Welt | Wo | Farben | Titelschrift |
 | --- | --- | --- | --- |
 | Grundton | alle Seiten ohne eigene Welt | Weiss, Tinte `#16181d`, Gold nur für das Logo und kleine Details | Schibsted Grotesk |
-| Swisscom | Tür auf der Startseite | Weiss, Navy `#001155`, Blau `#0445c8`; bewusst ohne Swisscom-Logo | Schibsted Grotesk 700 |
-| Wendico | Tür auf der Startseite | Waldgrün `#14231d`, Lime `#d8ff71` wie auf wendico.ch | Manrope, Text in DM Sans |
-| Los Trios | Tür auf der Startseite | nur Schwarz und Weiss, Fotos in Schwarz-Weiss | Libre Bodoni kursiv (wie im Bandlogo) |
+| Swisscom | Seite `/arbeit/` und Tür auf der Startseite | Weiss, Navy `#001155`, Blau `#0445c8`; bewusst ohne Swisscom-Logo | Schibsted Grotesk 700 |
+| Wendico | Seite `/wendico/` und Tür auf der Startseite | Waldgrün `#14231d`, Lime `#d8ff71`, Grund `#f4f7f4` wie auf wendico.ch | Manrope, Text in DM Sans |
+| Los Trios | Seite `/musik/` und Tür auf der Startseite | nur Schwarz und Weiss; Fotos schwarz-weiss, farbig erst beim Überfahren; farbig ist sonst nur die Gitarre | Libre Bodoni kursiv (wie im Bandlogo) |
 | Sport | Tür auf der Startseite und Seite `/sport/` | Weiss, Tinte `#111`, Orange `#fa5a1e` vom Ski-Helm | Archivo, schmal und fett |
 
 - **Welt einer Seite setzen:** `<Base world="sport">`. Das schreibt `data-world` auf `<html>`; die Farben dazu stehen in
@@ -84,11 +84,12 @@ Vollbild-Menü, Fusszeile, Fliesstext in Schibsted Grotesk). Farben und Titelsch
   `--font-wendico-body` und `--font-lostrios` in `global.css`. Mono-Schrift gibt es nur für Tasten und Anzeige der Gitarre.
 - **Orange und Kontrast:** Weisse Schrift auf Orange ist nur für sehr grosse Wörter gedacht. Text und Knöpfe auf Orange
   stehen in Tinte, orange Schrift in normaler Grösse nimmt `--orange-deep`.
+- **Welten in Seiten:** Auf der Wendico-Seite wechselt nur der Inhalt (`main`) auf Manrope und DM Sans, Leiste, Menü und Fusszeile bleiben im gemeinsamen Rahmen. Die Musik-Seite trägt zusätzlich `theme="stage"` (dunkles Farbschema); der Block `lostrios` steht in `global.css` deshalb nach dem Block `stage`.
 - **Leiste über dunklen Abschnitten:** Abschnitte mit `data-nav-tone="dark"` beschriften die Leiste automatisch hell.
 
 Bewusst weggelassen, weil es schnell nach Vorlage aussieht: kleine Labels über jeder Überschrift, Nummern 01/02/03 ohne
 echte Reihenfolge, Pfeile hinter Links, mit Mittelpunkten verkettete Angaben, einzelne farbige Wörter in Überschriften
-und Einblenden bei jedem Abschnitt. Auf Startseite und Sport ist das umgesetzt; die übrigen Seiten folgen.
+und Einblenden bei jedem Abschnitt. Umgesetzt auf Startseite, Sport, Arbeit, Wendico und Musik; «Über mich» und «Kontakt» folgen.
 
 ## 3D-Szenen
 
@@ -104,7 +105,7 @@ Alle Szenen liegen in `src/scripts/three/` und sind komplett im Code gebaut (kei
 | `audio.ts` | Sound: Saiten-Synthese, Effektpedale, Begleitband, Akkorde, Licks und Riffs |
 | `mountain.ts` | Berg mit Skilift, Skifahrern/Bikern und Winter/Sommer-Schalter; passt Grösse und Lage ans Fenster an |
 | `pingpong.ts` | Tischtennis-Minispiel im orangen Block der Sport-Seite |
-| `work.ts` | Plattform-Stack und Projekt-Karussell |
+| `work.ts` | Plattform-Stack (Arbeit, in Swisscom-Farben) und Projekt-Karussell (Wendico, die Karten blenden am Rand ins Waldgrün aus) |
 | `viewer.ts`, `objects.ts`, `cap.ts` | einzelne Objekte (Cord-Cap, Plektrum, Golfball …) |
 
 ### Startseite: Türen in die Welten

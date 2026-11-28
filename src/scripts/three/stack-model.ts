@@ -1,10 +1,12 @@
 // Der Plattform-Stack als Modell: vier Ebenen (Netzwerk, Cloud, Plattform, Web & Apps)
-// mit Eck-Stützen und wandernden Datenpaketen. Genutzt auf der Arbeit-Seite (interaktiv)
-// und in der Goldstaub-Story der Startseite.
+// mit Eck-Stützen und wandernden Datenpaketen. Genutzt auf der Arbeit-Seite (interaktiv).
+// Farben der Swisscom-Welt: Navy, Blau, Weiss und Hellblau; kleine Lichter in Cyan und Weiss.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
-import { clay, COLORS, damp } from './stage';
+import { clay, damp } from './stage';
 import { makeBrowser } from './objects';
+
+const P = { navy: 0x001155, blue: 0x0445c8, white: 0xffffff, sky: 0xb9d4ff, cyan: 0x1fb9ff, line: 0x33479a };
 
 export function buildStackModel() {
   const root = new THREE.Group();
@@ -33,10 +35,10 @@ export function buildStackModel() {
 
   // 0 Netzwerk: Knoten und Leitungen
   {
-    const l = mkLayer(COLORS.ink);
+    const l = mkLayer(P.navy);
     const nodes: [number, number][] = [[-1.1, -1.0], [0.2, -1.15], [1.1, -0.5], [-0.6, 0.1], [0.55, 0.35], [-1.15, 1.05], [0.1, 1.15], [1.15, 1.0]];
     const links = [[0, 1], [1, 2], [0, 3], [3, 4], [2, 4], [3, 5], [4, 6], [5, 6], [6, 7], [4, 7]];
-    const lineMat = clay(0x3b4a72, { roughness: 0.5 });
+    const lineMat = clay(P.line, { roughness: 0.5 });
     for (const [a, b] of links) {
       const A = new THREE.Vector3(nodes[a][0], T / 2 + 0.02, nodes[a][1]);
       const B = new THREE.Vector3(nodes[b][0], T / 2 + 0.02, nodes[b][1]);
@@ -46,7 +48,7 @@ export function buildStackModel() {
       l.g.add(seg);
     }
     nodes.forEach(([x, z], i) => {
-      const n = new THREE.Mesh(new THREE.SphereGeometry(0.11, 20, 14), glow(i % 3 === 0 ? COLORS.orange : COLORS.teal, 1.2));
+      const n = new THREE.Mesh(new THREE.SphereGeometry(0.11, 20, 14), glow(i % 3 === 0 ? P.white : P.cyan, 1.2));
       n.position.set(x, T / 2 + 0.07, z);
       n.castShadow = true;
       l.g.add(n);
@@ -54,15 +56,15 @@ export function buildStackModel() {
   }
   // 1 Cloud: Server-Racks
   {
-    const l = mkLayer(COLORS.blue);
+    const l = mkLayer(P.blue);
     for (let i = 0; i < 6; i++) {
       const x = -1.0 + (i % 3) * 1.0;
       const z = i < 3 ? -0.7 : 0.7;
-      const rack = rb(0.7, 0.42, 0.9, 0.07, clay(COLORS.white, { roughness: 0.35 }));
+      const rack = rb(0.7, 0.42, 0.9, 0.07, clay(P.white, { roughness: 0.35 }));
       rack.position.set(x, T / 2 + 0.21, z);
       l.g.add(rack);
       for (let k = 0; k < 3; k++) {
-        const led = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), glow(k === 0 ? COLORS.orange : COLORS.teal));
+        const led = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), glow(k === 0 ? P.white : P.cyan));
         led.position.set(x - 0.2 + k * 0.1, T / 2 + 0.3, z + 0.455);
         l.g.add(led);
       }
@@ -70,7 +72,7 @@ export function buildStackModel() {
   }
   // 2 Plattform: Zahnräder + Pipeline
   {
-    const l = mkLayer(COLORS.white);
+    const l = mkLayer(P.white);
     const gear = (r: number, color: number) => {
       const g = new THREE.Group();
       const body = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.16, 28), clay(color, { roughness: 0.35 }));
@@ -84,34 +86,34 @@ export function buildStackModel() {
         t.rotation.y = -a;
         g.add(t);
       }
-      const hub = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.3, r * 0.3, 0.2, 16), clay(COLORS.white, { roughness: 0.3 }));
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.3, r * 0.3, 0.2, 16), clay(P.white, { roughness: 0.3 }));
       g.add(hub);
       return g;
     };
-    const g1 = gear(0.62, COLORS.orange);
+    const g1 = gear(0.62, P.blue);
     g1.position.set(-0.75, T / 2 + 0.1, -0.5);
-    const g2 = gear(0.42, COLORS.ink);
+    const g2 = gear(0.42, P.navy);
     g2.position.set(0.3, T / 2 + 0.1, -0.02);
-    const g3 = gear(0.34, COLORS.blue);
+    const g3 = gear(0.34, P.cyan);
     g3.position.set(0.98, T / 2 + 0.1, 0.5);
     l.g.add(g1, g2, g3);
     l.spin = [g1, g2, g3];
-    const pipe = rb(2.3, 0.14, 0.2, 0.06, clay(COLORS.maple, { roughness: 0.4 }));
+    const pipe = rb(2.3, 0.14, 0.2, 0.06, clay(P.sky, { roughness: 0.4 }));
     pipe.position.set(-0.2, T / 2 + 0.07, 1.15);
     l.g.add(pipe);
   }
   // 3 Web & Apps: Browser + Handy
   {
-    const l = mkLayer(COLORS.maple);
+    const l = mkLayer(P.sky);
     const br = makeBrowser();
     br.traverse((o) => ((o as THREE.Mesh).castShadow = true));
     br.scale.setScalar(0.95);
     br.rotation.set(-0.5, 0, 0);
     br.position.set(-0.4, T / 2 + 0.75, -0.25);
-    const phone = rb(0.5, 0.98, 0.08, 0.07, clay(COLORS.ink, { roughness: 0.3 }));
+    const phone = rb(0.5, 0.98, 0.08, 0.07, clay(P.navy, { roughness: 0.3 }));
     phone.position.set(1.05, T / 2 + 0.5, 0.75);
     phone.rotation.set(-0.5, -0.25, 0);
-    const screen = rb(0.42, 0.86, 0.02, 0.05, glow(COLORS.blue, 0.5));
+    const screen = rb(0.42, 0.86, 0.02, 0.05, glow(P.blue, 0.5));
     screen.position.set(1.05, T / 2 + 0.52, 0.79);
     screen.rotation.copy(phone.rotation);
     l.g.add(br, phone, screen);
@@ -128,7 +130,7 @@ export function buildStackModel() {
     rig.add(p);
     posts.push(p);
     for (let k = 0; k < 2; k++) {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 10), glow(k ? COLORS.orange : COLORS.teal, 2));
+      const m = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 10), glow(k ? P.white : P.cyan, 2));
       rig.add(m);
       packets.push({ m, post: i, t: (i * 0.23 + k * 0.5) % 1, sp: (k ? -1 : 1) * (0.16 + i * 0.03) });
     }

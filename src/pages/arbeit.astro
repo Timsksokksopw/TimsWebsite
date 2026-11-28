@@ -1,14 +1,25 @@
 ---
+// Arbeit-Seite in der Swisscom-Welt: Weiss, Navy und Blau, klares Raster, sachliche Angaben.
+// Bewusst ohne Swisscom-Logo: Das ist Tims Seite über seine Lehre, kein Auftritt von Swisscom.
+import '@fontsource-variable/manrope/wght.css'; // nur für die Tür zur Wendico-Seite ganz unten
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { projekte } from '../data/projekte';
 import wendicoLogo from '../assets/logos/wendico.png';
 
+// Eckdaten der Lehre für die Tabelle im Kopf der Seite
+const eckdaten = [
+  ['Lehre', 'Informatiker EFZ'],
+  ['Fachrichtung', 'Plattformentwicklung'],
+  ['Lehrjahr', '4 von 4'],
+  ['Schule', 'TBZ Zürich, mit Berufsmatura'],
+];
+// Von oben nach unten, wie der Stapel im Bild. Schicht 1 ist die Basis.
 const layers = [
-  { n: '04', title: 'Web & Apps', text: 'Was am Ende bei den Menschen ankommt: Oberflächen, Websites, Anwendungen.', chips: ['HTML', 'CSS', 'JavaScript', 'Java'] },
-  { n: '03', title: 'Plattform', text: 'Versionieren, automatisieren, ausrollen. Damit Änderungen sicher live gehen.', chips: ['Git', 'CI/CD', 'Python'] },
-  { n: '02', title: 'Cloud', text: 'Infrastruktur, die man nicht mehr anfassen muss, sondern beschreibt.', chips: ['AWS', 'Hosting'] },
-  { n: '01', title: 'Netzwerk', text: 'Die Basis, auf der alles andere steht.', chips: ['Subnetting', 'IP', 'Firewall'] },
+  { title: 'Web & Apps', text: 'Was am Ende bei den Menschen ankommt: Oberflächen, Websites, Anwendungen.', tags: ['HTML', 'CSS', 'JavaScript', 'Java'] },
+  { title: 'Plattform', text: 'Versionieren, automatisieren, ausrollen. Damit Änderungen sicher live gehen.', tags: ['Git', 'CI/CD', 'Python'] },
+  { title: 'Cloud', text: 'Infrastruktur, die man nicht mehr anfassen muss, sondern beschreibt.', tags: ['AWS', 'Hosting'] },
+  { title: 'Netzwerk', text: 'Die Basis, auf der alles andere steht.', tags: ['Subnetting', 'IP', 'Firewall'] },
 ];
 const stationen = [
   ['Aug 2023', 'First Steps', 'Einstieg bei Swisscom: Prozesse, Werkzeuge, erste Aufgaben.'],
@@ -17,75 +28,68 @@ const stationen = [
   ['2024 – 2025', 'Twint Testing Team', 'Mobile Apps getestet: Qualitätssicherung, Bug-Tracking, agile Zusammenarbeit.'],
   ['danach', 'NexCC', 'Erst im Support und in der Kundenbetreuung, dann als Host mit eigenem Projekt und einem Lernenden, den ich als Mentor begleite.'],
 ];
+const werkzeuge = [
+  ['Web', 'HTML, CSS, JavaScript, Three.js, PHP-Formulare, SEO'],
+  ['Plattform und Betrieb', 'Git, GitHub Actions, AWS, Cloudflare, Python, Netzwerk, Firewall'],
+  ['Sprachen', 'Deutsch, Englisch, Französisch'],
+];
+const neuesFenster = ' (öffnet neues Fenster)';
 ---
 
 <Base
   page="arbeit"
+  world="swisscom"
   title="Arbeit"
   description="Tim Biedermann ist Informatiker Plattformentwicklung im 4. Lehrjahr bei Swisscom: Netzwerk, Cloud, Plattform und Web."
 >
-  <section class="page-hero">
-    <div class="container whero">
-      <div class="stack" style="--gap:1.3rem">
-        <p class="eyebrow" data-reveal>Arbeit · Swisscom, seit August 2023</p>
-        <h1 class="t-page" data-split>Plattformen bauen.</h1>
-        <p class="t-lead t-muted whero__lead" data-reveal style="--d:3">
+  <section class="top">
+    <div class="container top__grid">
+      <div>
+        <p class="top__where">Swisscom, seit August 2023</p>
+        <h1 class="top__title">Plattformen bauen.</h1>
+        <p class="top__lead">
           Bei Swisscom mache ich die Lehre als Informatiker EFZ mit Fachrichtung Plattformentwicklung. Ich bin im 4. Lehrjahr, mache daneben die
           Berufsmatura und gehe an der TBZ in Zürich zur Schule.
         </p>
-        <div class="btn-row" data-reveal style="--d:4">
-          <a class="btn" href="#swisscom">Der Stack <span class="arrow">↓</span></a>
-          <a class="btn btn--ghost" href="#stationen">Stationen</a>
+        <div class="btn-row">
+          <a class="btn sc-btn" href="#stack">Der Stack</a>
+          <a class="btn sc-btn sc-btn--ghost" href="#stationen">Stationen</a>
         </div>
       </div>
+      <dl class="facts">
+        {
+          eckdaten.map(([k, v]) => (
+            <div>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))
+        }
+      </dl>
     </div>
   </section>
 
-  <section class="section section--tight" id="swisscom">
+  <section class="band" id="stack">
     <div class="container">
-      <div class="section-head">
-        <p class="eyebrow" data-reveal>Der Stack</p>
-        <h2 class="t-xl" data-split>Eine Plattform besteht aus Schichten.</h2>
-        <p class="t-lead t-muted" data-reveal>Hier sind die, mit denen ich arbeite. Fahr über eine Ebene, um hineinzuschauen.</p>
+      <div class="head">
+        <h2 class="h2">Eine Plattform besteht aus Schichten.</h2>
+        <p class="sub">Hier sind die, mit denen ich arbeite. Fahr über eine Ebene oder tipp sie an, um hineinzuschauen.</p>
       </div>
 
       <div class="stackwrap">
-        <div class="stackwrap__canvas card">
+        <div class="stackwrap__canvas">
           <div class="stage3d" data-stack></div>
         </div>
-        <ol class="layers">
+        <ol class="layers" reversed>
           {
             layers.map((l, i) => (
-              <li class="layer" data-layer={layers.length - 1 - i} tabindex="0" data-reveal style={`--d:${i}`}>
-                <span class="layer__n">{l.n}</span>
-                <div>
-                  <h3 class="t-m">{l.title}</h3>
-                  <p>{l.text}</p>
-                  <ul class="chips">
-                    {l.chips.map((c) => <li class="chip">{c}</li>)}
-                  </ul>
-                </div>
-              </li>
-            ))
-          }
-        </ol>
-      </div>
-
-      <div class="grid-2 stations" id="stationen">
-        <div class="stack" style="--gap:1.2rem">
-          <h3 class="t-l" data-reveal>Stationen in der Lehre</h3>
-          <p class="t-muted" data-reveal>
-            Bei Swisscom wechseln Lernende alle paar Monate das Projekt. So habe ich in kurzer Zeit ziemlich viele Seiten des Unternehmens gesehen.
-          </p>
-          <p data-reveal><a class="link" href="https://timswebi.ch/home_new.html" target="_blank" rel="noopener">Ausführlicher auf timswebi.ch ↗</a></p>
-        </div>
-        <ol class="timeline">
-          {
-            stationen.map(([date, title, text], i) => (
-              <li data-reveal style={`--d:${i % 3}`}>
-                <time>{date}</time>
-                <strong>{title}</strong>
-                <p>{text}</p>
+              <li class="layer" data-layer={layers.length - 1 - i} tabindex="0">
+                <span class="layer__n">Schicht {layers.length - i}</span>
+                <h3>{l.title}</h3>
+                <p>{l.text}</p>
+                <ul class="tags">
+                  {l.tags.map((t) => <li>{t}</li>)}
+                </ul>
               </li>
             ))
           }
@@ -94,46 +98,59 @@ const stationen = [
     </div>
   </section>
 
-  <section class="section section--tight">
-    <div class="container grid-2">
-      <div class="stack" style="--gap:1.2rem">
-        <p class="eyebrow" data-reveal>Werkzeugkasten</p>
-        <h2 class="t-l" data-split>Womit ich arbeite</h2>
-        <p class="t-muted" data-reveal>Kein Prozentbalken, nur das, was ich wirklich regelmässig in der Hand habe.</p>
+  <section class="part" id="stationen">
+    <div class="container part__grid">
+      <div class="part__intro">
+        <h2 class="h2">Stationen in der Lehre</h2>
+        <p>Bei Swisscom wechseln Lernende alle paar Monate das Projekt. So habe ich in kurzer Zeit ziemlich viele Seiten des Unternehmens gesehen.</p>
+        <p>
+          <a class="link" href="https://timswebi.ch/home_new.html" target="_blank" rel="noopener">Ausführlicher auf timswebi.ch<span class="sr-only">{neuesFenster}</span></a>
+        </p>
       </div>
-      <div class="tools">
-        <div data-reveal>
-          <h3>Web</h3>
-          <ul class="chips">
-            {['HTML', 'CSS', 'JavaScript', 'Three.js', 'PHP-Formulare', 'SEO'].map((c) => <li class="chip">{c}</li>)}
-          </ul>
-        </div>
-        <div data-reveal style="--d:1">
-          <h3>Plattform & Betrieb</h3>
-          <ul class="chips">
-            {['Git', 'GitHub Actions', 'AWS', 'Cloudflare', 'Python', 'Netzwerk', 'Firewall'].map((c) => <li class="chip">{c}</li>)}
-          </ul>
-        </div>
-        <div data-reveal style="--d:2">
-          <h3>Sprachen</h3>
-          <ul class="chips">
-            {['Deutsch', 'Englisch', 'Französisch'].map((c) => <li class="chip">{c}</li>)}
-          </ul>
-        </div>
-      </div>
+      <ol class="timeline">
+        {
+          stationen.map(([date, title, text]) => (
+            <li>
+              <time>{date}</time>
+              <strong>{title}</strong>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
-  <section class="section section--tight">
+  <section class="part part--line">
+    <div class="container part__grid">
+      <div class="part__intro">
+        <h2 class="h2">Womit ich arbeite</h2>
+        <p>Kein Prozentbalken, nur das, was ich wirklich regelmässig in der Hand habe.</p>
+      </div>
+      <dl class="spec">
+        {
+          werkzeuge.map(([k, v]) => (
+            <div>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Tür zur nächsten Welt: Wendico, schon in ihren Farben -->
+  <section class="next">
     <div class="container">
-      <a class="teaser" href="/wendico/" data-reveal>
-        <Image src={wendicoLogo} alt="" width={120} class="teaser__logo" />
+      <a class="teaser" href="/wendico/">
+        <span class="teaser__logo"><Image src={wendicoLogo} alt="" width={96} /></span>
         <span class="teaser__text">
-          <em>Und daneben</em>
+          <span>Und daneben</span>
           <strong>Wendico, meine eigene Digitalagentur.</strong>
           <span>Websites, Software und SaaS, {projekte.length} Projekte bisher.</span>
         </span>
-        <span class="teaser__go" aria-hidden="true">→</span>
+        <span class="btn teaser__go">Zur Wendico-Seite</span>
       </a>
     </div>
   </section>
@@ -153,22 +170,139 @@ const stationen = [
 </script>
 
 <style>
-  .whero__lead {
+  /* ---------- Kopf: Titel links, Eckdaten rechts ---------- */
+  .top {
+    padding-top: calc(var(--nav-h) + clamp(2.5rem, 8vw, 6.5rem));
+    padding-bottom: clamp(3rem, 7vw, 6rem);
+  }
+  .top__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: end;
+  }
+  .top__where {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .top__title {
+    margin-top: 0.8rem;
+    font-size: clamp(2.8rem, 6.6vw, 5.6rem);
+    font-weight: 700;
+    letter-spacing: -0.028em;
+    line-height: 1;
+    color: var(--navy);
+  }
+  .top__lead {
+    margin-top: 1.6rem;
+    max-width: 30em;
+    font-size: clamp(1.15rem, 1.05rem + 0.5vw, 1.45rem);
+    line-height: 1.45;
+  }
+  .top .btn-row {
+    margin-top: 2rem;
+  }
+  .sc-btn {
+    --btn-bg: var(--accent);
+    --btn-fg: #fff;
+  }
+  .sc-btn::before {
+    background: var(--navy);
+  }
+  .sc-btn:hover {
+    color: #fff;
+  }
+  .sc-btn--ghost {
+    --btn-bg: transparent;
+    --btn-fg: var(--navy);
+    box-shadow: inset 0 0 0 1.5px var(--line);
+  }
+  /* Eckdaten als Tabelle, wie ein Datenblatt */
+  .facts {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+  }
+  .facts div {
+    display: grid;
+    gap: 0.15rem;
+    padding: 1rem 1.3rem;
+  }
+  .facts div + div {
+    border-top: 1px solid var(--line);
+  }
+  .facts dt {
+    font-size: 0.94rem;
+    color: var(--muted);
+  }
+  .facts dd {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.012em;
+    color: var(--navy);
+  }
+
+  /* ---------- gemeinsame Bausteine der Abschnitte ---------- */
+  .h2 {
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    line-height: 1.08;
+    color: var(--navy);
+  }
+  .sub {
+    margin-top: 1rem;
     max-width: 34em;
+    font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+    line-height: 1.45;
+  }
+  .head {
+    margin-bottom: clamp(2rem, 4vw, 3.4rem);
+  }
+  .part {
+    padding-block: clamp(3.5rem, 8vw, 7rem);
+  }
+  .part--line {
+    padding-top: 0;
+  }
+  .part--line .part__grid {
+    border-top: 1px solid var(--line);
+    padding-top: clamp(3.5rem, 8vw, 7rem);
+  }
+  .part__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: start;
+  }
+  .part__intro {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 30em;
+  }
+  .part__intro p {
+    color: var(--muted);
+  }
+
+  /* ---------- Der Stack ---------- */
+  .band {
+    background: var(--paper-2);
+    padding-block: clamp(3.5rem, 8vw, 7rem);
   }
   .stackwrap {
     display: grid;
     grid-template-columns: 1.15fr 1fr;
-    gap: clamp(1.2rem, 3vw, 3rem);
+    gap: clamp(1rem, 2.4vw, 2rem);
     align-items: stretch;
   }
   .stackwrap__canvas {
     position: relative;
-    min-height: clamp(24rem, 52vw, 40rem);
-    padding: 0;
+    min-height: clamp(24rem, 50vw, 38rem);
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: #fff;
     overflow: hidden;
-    background:
-      radial-gradient(70% 60% at 50% 40%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 70%), var(--card);
   }
   .layers {
     list-style: none;
@@ -180,51 +314,73 @@ const stationen = [
   }
   .layer {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 1.1rem;
-    padding: clamp(1rem, 1.8vw, 1.5rem);
-    border-radius: var(--radius-s);
+    gap: 0.3rem;
+    padding: clamp(1rem, 1.7vw, 1.4rem) clamp(1.1rem, 1.9vw, 1.6rem);
+    border-radius: 20px;
     border: 1px solid var(--line);
-    background: color-mix(in srgb, var(--card) 60%, transparent);
+    background: #fff;
     cursor: pointer;
-    transition: background-color 0.35s, border-color 0.35s, transform 0.5s var(--ease), box-shadow 0.4s;
+    transition: background-color 0.35s, border-color 0.35s, color 0.35s, transform 0.5s var(--ease);
   }
   .layer__n {
-    font-size: 0.86rem;
-    color: var(--muted);
-    padding-top: 0.3rem;
+    font-size: 0.9rem;
     font-weight: 600;
+    color: var(--muted);
+  }
+  .layer h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.014em;
+    color: var(--navy);
+    transition: color 0.35s;
   }
   .layer p {
+    font-size: 0.98rem;
     color: var(--muted);
-    font-size: 0.96rem;
-    margin: 0.35rem 0 0.8rem;
+  }
+  .tags {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tags li {
+    padding: 0.3em 0.8em;
+    border-radius: 999px;
+    background: #e9f0fc;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--navy);
+    transition: background-color 0.35s, color 0.35s;
   }
   .layer:global(.is-active) {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: transparent;
+    background: var(--navy);
+    border-color: var(--navy);
+    color: #fff;
     transform: translateX(-10px);
-    box-shadow: 0 24px 50px -30px rgba(13, 19, 34, 0.7);
+  }
+  .layer:global(.is-active) h3 {
+    color: #fff;
   }
   .layer:global(.is-active) p,
   .layer:global(.is-active) .layer__n {
-    color: rgba(243, 240, 233, 0.72);
+    color: rgba(255, 255, 255, 0.78);
   }
-  .layer:global(.is-active) .chip {
-    border-color: rgba(255, 255, 255, 0.25);
-    background: transparent;
+  .layer:global(.is-active) .tags li {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
   }
-  .stations {
-    margin-top: clamp(3.5rem, 8vw, 7rem);
-  }
+
+  /* ---------- Stationen ---------- */
   .timeline {
     list-style: none;
     margin: 0;
-    padding: 0 0 0 1.6rem;
+    padding: 0 0 0 1.7rem;
     border-left: 2px solid var(--line);
     display: grid;
-    gap: 1.8rem;
+    gap: 1.9rem;
   }
   .timeline li {
     position: relative;
@@ -234,97 +390,130 @@ const stationen = [
   .timeline li::before {
     content: '';
     position: absolute;
-    left: calc(-1.6rem - 7px);
-    top: 0.3rem;
-    width: 12px;
-    height: 12px;
+    left: calc(-1.7rem - 8px);
+    top: 0.28rem;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
-    background: var(--paper);
-    border: 2.5px solid var(--accent);
+    background: #fff;
+    border: 3px solid var(--accent);
     transition: transform 0.4s var(--ease-spring), background-color 0.3s;
   }
   .timeline li:hover::before {
-    transform: scale(1.5);
+    transform: scale(1.4);
     background: var(--accent);
   }
   .timeline time {
-    font-size: 0.86rem;
-    color: var(--muted);
+    font-size: 0.94rem;
     font-weight: 600;
+    color: var(--muted);
   }
   .timeline strong {
-    font-family: var(--font-display);
     font-size: 1.35rem;
+    font-weight: 700;
     letter-spacing: -0.014em;
+    color: var(--navy);
   }
   .timeline p {
+    max-width: 34em;
     color: var(--muted);
-    font-size: 0.96rem;
   }
 
-  .tools {
+  /* ---------- Werkzeuge als Tabelle ---------- */
+  .spec {
+    margin: 0;
+    border-top: 1px solid var(--line);
+  }
+  .spec div {
     display: grid;
-    gap: 1.6rem;
+    grid-template-columns: 12rem 1fr;
+    gap: 0.3rem 1.5rem;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--line);
   }
-  .tools h3 {
-    font-size: 0.86rem;
-    font-weight: 600;
-    color: var(--muted);
-    margin-bottom: 0.8rem;
+  .spec dt {
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .spec dd {
+    margin: 0;
   }
 
+  /* ---------- Tür zu Wendico ---------- */
+  .next {
+    padding-bottom: clamp(3.5rem, 8vw, 7rem);
+  }
   .teaser {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: clamp(1rem, 3vw, 2.5rem);
-    padding: clamp(1.4rem, 3.5vw, 3rem);
-    border-radius: var(--radius);
-    background: #0f1012;
-    color: #f3efe6;
+    padding: clamp(1.5rem, 3.5vw, 3rem);
+    border-radius: clamp(22px, 3vw, 40px);
+    background: #14231d;
+    color: #fff;
     transition: transform 0.6s var(--ease);
   }
   .teaser:hover {
     transform: translateY(-4px);
   }
   .teaser__logo {
-    width: clamp(3.2rem, 7vw, 5.5rem);
-    height: auto;
+    display: inline-flex;
+    padding: 0.7rem 1.1rem;
+    border-radius: 999px;
+    background: #fff;
+  }
+  .teaser__logo :global(img) {
+    height: 1.9rem;
+    width: auto;
   }
   .teaser__text {
     display: grid;
-    gap: 0.3rem;
-  }
-  .teaser__text em {
-    font-size: 1.1rem;
-    color: #d9a94e;
-    font-weight: 600;
-  }
-  .teaser__text strong {
-    font-family: var(--font-display);
-    font-size: clamp(1.5rem, 3.6vw, 3rem);
-    font-weight: 620;
-    letter-spacing: -0.022em;
-    line-height: 1.02;
+    gap: 0.35rem;
   }
   .teaser__text > span {
-    color: #a8a195;
+    color: #a5b5ac;
+  }
+  .teaser__text strong {
+    font-family: var(--font-wendico);
+    font-size: clamp(1.5rem, 3.2vw, 2.7rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.06;
   }
   .teaser__go {
-    font-size: clamp(1.4rem, 3vw, 2.4rem);
-    color: #d9a94e;
-    transition: transform 0.5s var(--ease-spring);
+    --btn-bg: #d8ff71;
+    --btn-fg: #14231d;
   }
-  .teaser:hover .teaser__go {
-    transform: translateX(8px);
+  .teaser__go::before {
+    background: #fff;
+  }
+  .teaser:hover .teaser__go,
+  .teaser:focus-visible .teaser__go {
+    color: #14231d;
+  }
+  .teaser:hover .teaser__go::before,
+  .teaser:focus-visible .teaser__go::before {
+    transform: translateY(0);
   }
 
   @media (max-width: 900px) {
+    .top__grid,
+    .part__grid,
     .stackwrap {
       grid-template-columns: 1fr;
     }
     .layer:global(.is-active) {
       transform: none;
+    }
+    .teaser {
+      grid-template-columns: 1fr;
+      justify-items: start;
+    }
+  }
+  @media (max-width: 520px) {
+    .spec div {
+      grid-template-columns: 1fr;
     }
   }
 </style>

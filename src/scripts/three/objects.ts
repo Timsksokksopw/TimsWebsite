@@ -125,25 +125,26 @@ export function makePaddle(withBall = true) {
 export function makeBrowser() {
   const g = new THREE.Group();
   g.add(box(2.1, 1.5, 0.14, 0.1, clay(COLORS.white, { roughness: 0.35 })));
-  const bar = box(1.94, 0.24, 0.03, 0.012, clay(COLORS.ink, { roughness: 0.4 }));
+  // Browserfenster für den Plattform-Stack der Arbeit-Seite, in den Farben der Swisscom-Welt
+  const bar = box(1.94, 0.24, 0.03, 0.012, clay(0x001155, { roughness: 0.4 }));
   bar.position.set(0, 0.53, 0.075);
   g.add(bar);
-  [COLORS.orange, COLORS.maple, COLORS.teal].forEach((c, i) => {
+  [0xffffff, 0xb9d4ff, 0x1fb9ff].forEach((c, i) => {
     const d = new THREE.Mesh(new THREE.SphereGeometry(0.05, 14, 10), clay(c, { roughness: 0.3 }));
     d.scale.z = 0.5;
     d.position.set(-0.82 + i * 0.15, 0.53, 0.095);
     g.add(d);
   });
-  const hero = box(0.86, 0.72, 0.05, 0.04, clay(COLORS.blue, { roughness: 0.3 }));
+  const hero = box(0.86, 0.72, 0.05, 0.04, clay(0x0445c8, { roughness: 0.3 }));
   hero.position.set(-0.46, -0.08, 0.08);
   g.add(hero);
   const grey = clay(0xcfd3dc, { roughness: 0.5 });
   [0.62, 0.78, 0.5].forEach((w, i) => {
-    const line = box(w, 0.085, 0.03, 0.014, i === 0 ? clay(COLORS.ink, { roughness: 0.5 }) : grey);
+    const line = box(w, 0.085, 0.03, 0.014, i === 0 ? clay(0x001155, { roughness: 0.5 }) : grey);
     line.position.set(0.1 + w / 2, 0.18 - i * 0.17, 0.08);
     g.add(line);
   });
-  const btn = box(0.42, 0.16, 0.05, 0.024, clay(COLORS.orange, { roughness: 0.3 }));
+  const btn = box(0.42, 0.16, 0.05, 0.024, clay(0x1fb9ff, { roughness: 0.3 }));
   btn.position.set(0.31, -0.36, 0.085);
   g.add(btn);
   return g;

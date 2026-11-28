@@ -12,12 +12,13 @@ interface Props {
   description?: string;
   theme?: 'light' | 'stage';
   /** Welt der Seite: bestimmt Farben und Titelschrift (Token-Blöcke in src/styles/global.css) */
-  world?: 'home' | 'sport';
+  world?: 'home' | 'sport' | 'swisscom' | 'wendico' | 'lostrios';
   page: string;
 }
 const { title, description = site.description, theme = 'light', world, page } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.tagline}`;
-const themeColor = { light: '#ffffff', stage: '#06080c' }[theme];
+// Farbe der Browser-Leiste am Handy: Weiss, auf der Musik-Seite Schwarz
+const themeColor = world === 'lostrios' ? '#000000' : { light: '#ffffff', stage: '#06080c' }[theme];
 ---
 
 <!doctype html>
